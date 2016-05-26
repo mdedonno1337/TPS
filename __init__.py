@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#  *-* coding: cp850 *-*
+#  *-* coding: utf-8 *-*
 
 from __future__ import absolute_import
 
@@ -7,16 +7,23 @@ import ast
 import os
 from pprint import pprint
 import random
+import sys
 
 from scipy import misc
 
 import numpy as np
 
-from . import TPSCy
+try:
+    from . import TPSCy as TPSModule
+    CythonModule = True
+except:
+    from . import TPSpy as TPSModule
+    CythonModule = False
+    
 from .config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
     CONF_maxx, CONF_miny, CONF_maxy, CONF_dm, CONF_useWeights, CONF_weightsLimit, \
     CONF_nbRandom
-    
+
 ################################################################################
 #    
 #    The aim of this wrapper is to simplify the use of the Cython library,
@@ -45,8 +52,8 @@ from .config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
 #    Because this library is designed to work on fingerprints, all functions are
 #    designes to work with coordinates in milimeters, with the origin in the
 #    lower left corner, as the ANSI/NIST 2007 standard. All functions, except
-#    "TPS_Image", are adimentional (can work with mm, inch, yard, pixels,
-#    �ngstr�m, light-year, parsec, or, if you want, the "Double-decker bus" unit).
+#    "TPS_Image", are adimentional (can work with mm, inch, yard, pixels, light-
+#    year, parsec, or, if you want, the "Double-decker bus" unit).
 #    
 #                                               Marco De Donno
 #                                               University of Lausanne
@@ -55,7 +62,11 @@ from .config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
 #    References:                                                                
 #        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the   
 #        decomposition of deformations. IEEE Transactions on Pattern Analysis   
-#        and Machine Intelligence, Vol. 11 (6), pp. 567-585                     
+#        and Machine Intelligence, Vol. 11 (6), pp. 567-585
+#
+#        NIST. (2007). American National Standard for Information Systems – Data
+#        Format for the Interchange of Fingerprint Facial, and Other Biometric
+#        Information – Part 1 (NIST Special Publication 500-271)
 #    
 ################################################################################
 ################################################################################
@@ -98,7 +109,7 @@ def TPS_generate( *args, **kwags ):
     src = np.array( src )
     dst = np.array( dst )
     
-    return TPSCy.generate( src, dst )
+    return TPSModule.generate( src, dst )
 
 def TPS_project( *args, **kwargs ):
     ############################################################################
@@ -143,11 +154,11 @@ def TPS_project( *args, **kwargs ):
             theta = kwargs.get( 'theta', None )
     
     if theta == None:
-        x, y, _ = TPSCy.project( g, x, y, 0 )
+        x, y, _ = TPSModule.project( g, x, y, 0 )
         return x, y
     
     else:
-        x, y, theta = TPSCy.project( g, x, y, theta )
+        x, y, theta = TPSModule.project( g, x, y, theta )
         return x, y, theta
 
 ################################################################################
@@ -208,7 +219,7 @@ def TPS_fromListToNumpy( *args, **kwargs ):
     return g
 
 def TPS_recenter( *args, **kwargs ):
-    # TODO: on ditait que c'est pas si simple pour faire un shift ... Recontrôler depuis les données brutes de TWIG2, et TOUT refaire (les .tps et la logique d'application des tps).
+    # TODO: on ditait que c'est pas si simple pour faire un shift ... Recontr├â┬┤ler depuis les donn├â┬®es brutes de TWIG2, et TOUT refaire (les .tps et la logique d'application des tps).
     ############################################################################
     #    
     #    TPS recentering
@@ -394,121 +405,125 @@ def TPS_Image( **kwargs ):
     #            @return    : numpy.array or bool
     #        
     ############################################################################
+    
+    if CythonModule == False:
+        raise NotImplementedError
+    
+    else:
+        infile = kwargs.pop( "infile", None )
+        inimg = kwargs.pop( "inimg", None )
         
-    infile = kwargs.pop( "infile", None )
-    inimg = kwargs.pop( "inimg", None )
-    
-    gfile = kwargs.pop( "gfile", None )
-    g = kwargs.pop( "g", None )
-    
-    reverseFullGrid = kwargs.pop( "reverseFullGrid", False )
-    
-    gridSize = kwargs.pop( "gridSize", CONF_gridSize )
-    
-    cx = kwargs.pop( "cx", 0 )
-    cy = kwargs.pop( "cy", 0 )
-    res = kwargs.pop( "res", CONF_res )
-    
-    outfile = kwargs.pop( "outfile", None )
-    
-    ncores = kwargs.pop( "ncores", CONF_ncores )
-    
-    ############################################################################
-    #    Image loading and conversion
-    #        Loading the image in 'image coordinate' (top left) and flip in
-    #        'ANSI/NIST 2007 coordinates' (bottom left)
-    ############################################################################
-    
-    if infile != None:
-        indata = misc.imread( infile ).astype( np.int )
-    elif inimg != None:
-        indata = np.asarray( inimg )
-    else:
-        raise Exception( "No input data (infile or image object)" )
-    
-    indata = np.flipud( indata )
-    indata = indata.T
-    
-    ############################################################################
-    #    Distorsion parameters
-    #        The g file must be calculated in milimeters and not in pixels !
-    #        The center is in "NIST coordinates" (mm from the bottom left)
-    ############################################################################
-    
-    if gfile != None:
-        g = TPS_loadFromFile( gfile )
-    elif g != None:
-        pass
-    else:
-        raise Exception( "No TPS parameters of file" )
-    
-    if cx != 0 and cy != 0:
-        g = TPS_recenter( g = g, cx = cx, cy = cy )
-    
-    maxx, maxy = indata.shape
-    maxx = maxx / float( res ) * 25.4
-    maxy = maxy / float( res ) * 25.4
-    
-    ############################################################################
-    #    Range calculation
-    #        Because the borders could be in negative coordinate
-    ############################################################################
-    
-    r = TPSCy.r( g, 0, maxx, 0, maxy )
-    
-    size = [ 
-        int( float( res ) / 25.4 * ( r[ 'maxx' ] - r[ 'minx' ] ) ),
-        int( float( res ) / 25.4 * ( r[ 'maxy' ] - r[ 'miny' ] ) )
-    ]
-    
-    outimg = np.ones( size, dtype = np.intc )
-    
-    ############################################################################
-    #    Calculation of the "inverse" function (approximation)
-    #        The real inverse function of g is not calculable (the g function
-    #        is not bijective). My approximation here is to project a grid of
-    #        size gridSize with the g, and use this projected grid as source for
-    #        the g2 projection function. This function is used by the
-    #        TPSCy.image function.
-    ############################################################################
-    
-    if reverseFullGrid:
-        g2 = TPSCy.revert( g, 0, maxx, 0, maxy, gridSize )
-    else:
-        g2 = TPS_revertDownSampling( 
-            g = g,
-            
-            minx = 0,
-            maxx = maxx,
-            miny = 0,
-            maxy = maxy,
-            
-            gridSize = gridSize,
-            
-            **kwargs
-        )
-    
-    ############################################################################
-    #    Distorsion of the image
-    #        Reverse calculation of the distorted image. The g2 function allow
-    #        the TPSCy.image function to calculate the x, y coordinates on the
-    #        original image. This methodoloy allow to have a continuous image.
-    ############################################################################
-    
-    TPSCy.image( indata, g2, r, float( res ), outimg, ncores )
-    
-    ############################################################################
-    #    Preparation of the output image (file or image object return)
-    ############################################################################
-    
-    outimg = np.flipud( outimg.T )
-    outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
-    
-    if outfile != None:
-        outimg.save( outfile, dpi = ( int( res ), int( res ) ) )
-        return os.path.isfile( outfile )
-    else:
-        return outimg
+        gfile = kwargs.pop( "gfile", None )
+        g = kwargs.pop( "g", None )
+        
+        reverseFullGrid = kwargs.pop( "reverseFullGrid", False )
+        
+        gridSize = kwargs.pop( "gridSize", CONF_gridSize )
+        
+        cx = kwargs.pop( "cx", 0 )
+        cy = kwargs.pop( "cy", 0 )
+        res = kwargs.pop( "res", CONF_res )
+        
+        outfile = kwargs.pop( "outfile", None )
+        
+        ncores = kwargs.pop( "ncores", CONF_ncores )
+        
+        ############################################################################
+        #    Image loading and conversion
+        #        Loading the image in 'image coordinate' (top left) and flip in
+        #        'ANSI/NIST 2007 coordinates' (bottom left)
+        ############################################################################
+        
+        if infile != None:
+            indata = misc.imread( infile ).astype( np.int )
+        elif inimg != None:
+            indata = np.asarray( inimg )
+        else:
+            raise Exception( "No input data (infile or image object)" )
+        
+        indata = np.flipud( indata )
+        indata = indata.T
+        
+        ############################################################################
+        #    Distorsion parameters
+        #        The g file must be calculated in milimeters and not in pixels !
+        #        The center is in "NIST coordinates" (mm from the bottom left)
+        ############################################################################
+        
+        if gfile != None:
+            g = TPS_loadFromFile( gfile )
+        elif g != None:
+            pass
+        else:
+            raise Exception( "No TPS parameters of file" )
+        
+        if cx != 0 and cy != 0:
+            g = TPS_recenter( g = g, cx = cx, cy = cy )
+        
+        maxx, maxy = indata.shape
+        maxx = maxx / float( res ) * 25.4
+        maxy = maxy / float( res ) * 25.4
+        
+        ############################################################################
+        #    Range calculation
+        #        Because the borders could be in negative coordinate
+        ############################################################################
+        
+        r = TPSModule.r( g, 0, maxx, 0, maxy )
+        
+        size = [
+            int( float( res ) / 25.4 * ( r[ 'maxx' ] - r[ 'minx' ] ) ),
+            int( float( res ) / 25.4 * ( r[ 'maxy' ] - r[ 'miny' ] ) )
+        ]
+        
+        outimg = np.ones( size, dtype = np.intc )
+        
+        ############################################################################
+        #    Calculation of the "inverse" function (approximation)
+        #        The real inverse function of g is not calculable (the g function
+        #        is not bijective). My approximation here is to project a grid of
+        #        size gridSize with the g, and use this projected grid as source for
+        #        the g2 projection function. This function is used by the
+        #        TPSCy.image function.
+        ############################################################################
+        
+        if reverseFullGrid:
+            g2 = TPSModule.revert( g, 0, maxx, 0, maxy, gridSize )
+        else:
+            g2 = TPS_revertDownSampling( 
+                g = g,
+                
+                minx = 0,
+                maxx = maxx,
+                miny = 0,
+                maxy = maxy,
+                
+                gridSize = gridSize,
+                
+                **kwargs
+            )
+        
+        ############################################################################
+        #    Distorsion of the image
+        #        Reverse calculation of the distorted image. The g2 function allow
+        #        the TPSCy.image function to calculate the x, y coordinates on the
+        #        original image. This methodoloy allow to have a continuous image.
+        ############################################################################
+        
+        TPSModule.image( indata, g2, r, float( res ), outimg, ncores )
+        
+        ############################################################################
+        #    Preparation of the output image (file or image object return)
+        ############################################################################
+        
+        outimg = np.flipud( outimg.T )
+        outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
+        
+        if outfile != None:
+            outimg.save( outfile, dpi = ( int( res ), int( res ) ) )
+            return os.path.isfile( outfile )
+        else:
+            return outimg
 
 def TPS_Grid( **kwargs ):
     ############################################################################
@@ -564,34 +579,38 @@ def TPS_Grid( **kwargs ):
     #        ( minx, maxx, miny maxy ) arguments
     ############################################################################
     
-    g = kwargs.get( "g" )
+    if CythonModule == False:
+        raise NotImplementedError
     
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
-    
-    outfile = kwargs.get( "outfile", None )
-    
-    res = kwargs.get( "res", CONF_res )
-    dm = kwargs.get( "dm", CONF_dm )
-    
-    ############################################################################
-    #    Cython calls
-    ############################################################################
-    
-    outimg = TPSCy.grid( g, minx, maxx, miny, maxy, res = res, dm = dm )
-    
-    outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
-    
-    ############################################################################
-    #    Image writting on disk or return as numpy.array
-    ############################################################################
-    
-    if outfile != None:
-        outimg.save( outfile, dpi = ( res, res ) )
     else:
-        return outimg
+        g = kwargs.get( "g" )
+        
+        minx = kwargs.get( "minx", CONF_minx )
+        maxx = kwargs.get( "maxx", CONF_maxx )
+        miny = kwargs.get( "miny", CONF_miny )
+        maxy = kwargs.get( "maxy", CONF_maxy )
+        
+        outfile = kwargs.get( "outfile", None )
+        
+        res = kwargs.get( "res", CONF_res )
+        dm = kwargs.get( "dm", CONF_dm )
+        
+        ############################################################################
+        #    Cython calls
+        ############################################################################
+        
+        outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm )
+        
+        outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
+        
+        ############################################################################
+        #    Image writting on disk or return as numpy.array
+        ############################################################################
+        
+        if outfile != None:
+            outimg.save( outfile, dpi = ( res, res ) )
+        else:
+            return outimg
 
 def TPS_range( **kwargs ):
     ############################################################################
@@ -629,15 +648,19 @@ def TPS_range( **kwargs ):
     #            @return    : python dict
     #        
     ############################################################################
+    
+    if CythonModule == False:
+        raise NotImplementedError
+    
+    else:
+        g = kwargs.get( "g" )
         
-    g = kwargs.get( "g" )
-    
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
-    
-    return TPSCy.r( g, minx, maxx, miny, maxy )
+        minx = kwargs.get( "minx", CONF_minx )
+        maxx = kwargs.get( "maxx", CONF_maxx )
+        miny = kwargs.get( "miny", CONF_miny )
+        maxy = kwargs.get( "maxy", CONF_maxy )
+        
+        return TPSModule.r( g, minx, maxx, miny, maxy )
 
 def TPS_revertGrid( **kwargs ):
     ############################################################################
@@ -678,16 +701,20 @@ def TPS_revertGrid( **kwargs ):
     #        
     ############################################################################
     
-    g = kwargs.get( "g" )
+    if CythonModule == False:
+        raise NotImplementedError
     
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
-
-    gridSize = kwargs.get( "gridSize", CONF_gridSize )
+    else:
+        g = kwargs.get( "g" )
+        
+        minx = kwargs.get( "minx", CONF_minx )
+        maxx = kwargs.get( "maxx", CONF_maxx )
+        miny = kwargs.get( "miny", CONF_miny )
+        maxy = kwargs.get( "maxy", CONF_maxy )
     
-    return TPSCy.revert( g, minx, maxx, miny, maxy, gridSize )
+        gridSize = kwargs.get( "gridSize", CONF_gridSize )
+        
+        return TPSModule.revert( g, minx, maxx, miny, maxy, gridSize )
 
 def TPS_revertDownSampling( **kwargs ):
     ############################################################################

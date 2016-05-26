@@ -52,10 +52,7 @@ def U2( r ):
     else:
         return ( r ) * np.log( r )
 
-def generate( src, dst, cs = 0, cd = 0 ):
-    src = src - cs
-    dst = dst - cd
-    
+def generate( src, dst ):
     n = src.shape[0]
     
     K = U( cdist( src, src, metric = "euclidean" ) )
@@ -67,7 +64,6 @@ def generate( src, dst, cs = 0, cd = 0 ):
     V = np.hstack( ( dst.T, np.zeros( ( 2, 3 ) ) ) )
     
     Wa = solve( L, V.T )
-#     Wa = np.dot( inv( L ), V.T )
         
     W = Wa[ :-3 , : ]
     a = Wa[ -3: , : ]
@@ -91,20 +87,10 @@ def _p( XY, linear, W, src ):
     
     return p[ 0, : ]
 
-def projoPoint( **k ):
-    x = k.pop( "x" )
-    y = k.pop( "y" )
-    theta = k.pop( "theta", None )
-    
-    g = k.pop( "g", None )
-    if g != None:
-        linear = g['linear'],
-        W = g['weights'],
-        src = g['src']
-    else:
-        linear = k.pop( "linear" )
-        W = k.pop( "W" )
-        src = k.pop( "src" )
+def project( g, x, y, theta = None ):
+    linear = g['linear'],
+    W = g['weights'],
+    src = g['src']
     
     XY = np.array( [ x, y ] )
     
@@ -140,7 +126,7 @@ def projo( **k ):
     
     if XY.shape[ 1 ] == 2:
         return np.apply_along_axis( 
-                lambda x: projoPoint( 
+                lambda x: project( 
                     x = x[0],
                     y = x[1],
                     
@@ -151,7 +137,7 @@ def projo( **k ):
             )
     elif XY.shape[ 1 ] == 3:
         return np.apply_along_axis( 
-                lambda x: projoPoint( 
+                lambda x: project( 
                     x = x[0],
                     y = x[1],
                     theta = x[2],
@@ -160,4 +146,24 @@ def projo( **k ):
                     W = W,
                     src = src
                 ), 1, XY
+
             )
+
+################################################################################
+#    Anti-error
+################################################################################
+
+def r():
+    return
+ 
+def revert():
+    return
+ 
+def image():
+    return
+ 
+def grid():
+    return
+ 
+def range():
+    return
