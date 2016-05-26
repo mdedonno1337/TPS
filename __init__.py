@@ -13,6 +13,11 @@ from scipy import misc
 
 import numpy as np
 
+from ..TPS.config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
+    CONF_maxx, CONF_miny, CONF_maxy, CONF_dm, CONF_useWeights, CONF_weightsLimit, \
+    CONF_nbRandom
+
+
 try:
     from . import TPSCy as TPSModule
     CythonModule = True
@@ -20,10 +25,6 @@ except:
     from . import TPSpy as TPSModule
     CythonModule = False
     
-from .config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
-    CONF_maxx, CONF_miny, CONF_maxy, CONF_dm, CONF_useWeights, CONF_weightsLimit, \
-    CONF_nbRandom
-
 ################################################################################
 #    
 #    The aim of this wrapper is to simplify the use of the Cython library,
