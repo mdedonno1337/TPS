@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-#  *-* coding: cp850 *-*
+#  *-* coding: utf-8 *-*
 
 from scipy.linalg.basic import solve, inv
 from scipy.spatial.distance import cdist
-
 import numpy as np
 
 ################################################################################
 #    Autre
 ################################################################################
+
 def unit_vector( vector ):
     v = vector / np.linalg.norm( vector )
     return v
