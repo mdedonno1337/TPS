@@ -5,6 +5,7 @@ from distutils.core         import setup
 from distutils.extension    import Extension
 from Cython.Distutils       import build_ext
 
+import numpy
 
 setup( 
     cmdclass = { 'build_ext': build_ext },
@@ -12,6 +13,7 @@ setup(
         Extension( name = "TPSCy",
            sources = [ "TPSCy.pyx" ],
            libraries = [ 'm', 'gomp', 'pthread' ],
+           include_dirs = [ numpy.get_include() ],
            extra_compile_args = [ '-O3', '-fopenmp', '-fdce', '-ffast-math', '-Wfatal-errors', '-w' ],
            extra_link_args = []
         )
