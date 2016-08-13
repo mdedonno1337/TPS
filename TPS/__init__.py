@@ -162,6 +162,34 @@ def TPS_project( *args, **kwargs ):
         x, y, theta = TPSModule.project( g, x, y, theta )
         return x, y, theta
 
+def TPS_project_list( *args, **kwargs ):
+    ############################################################################
+    # 
+    #    List of point projection
+    # 
+    #        Projection of a list of ( x, y ) points with the TPS function 'g'
+    #        passed in parameters.
+    # 
+    #    Required:
+    #        @param 'g'   : TPS parameters
+    #        @type  'g'   : python dictionary
+    #        
+    #        @param 'lst' : List of points to distort
+    #        @type  'lst' : python list
+    #        
+    #    Return:
+    #        @return      : List of distorted points
+    #        @return      : python list
+    # 
+    ############################################################################
+    try:
+        g, lst = args
+    except:
+        g = kwargs.get( "g" )
+        lst = kwargs.get( "lst" )
+    
+    return [ TPS_project( g, *d ) for d in lst ]
+    
 ################################################################################
 #    
 #    TPS specific tools
