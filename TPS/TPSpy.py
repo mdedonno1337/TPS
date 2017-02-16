@@ -87,10 +87,21 @@ def _p( XY, linear, W, src ):
     
     return p[ 0, : ]
 
-def project( g, x, y, theta = None ):
-    linear = g['linear'],
-    W = g['weights'],
-    src = g['src']
+def project( *args, **kwargs ):
+    g = kwargs.get( 'g', None )
+    x = kwargs.get( 'x' )
+    y = kwargs.get( 'y' )
+    theta = kwargs.get( 'theta', None )
+    
+    if g == None:
+        linear = kwargs.get( 'linear' )
+        W = kwargs.get( 'W' )
+        src = kwargs.get( 'src' )
+
+    else:
+        linear = g['linear'],
+        W = g['weights'],
+        src = g['src']
     
     XY = np.array( [ x, y ] )
     
