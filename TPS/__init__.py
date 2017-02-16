@@ -216,7 +216,10 @@ def TPS_loadFromFile( f ):
     ############################################################################
         
     with open( f, "r" ) as fp:
-        g = ast.literal_eval( fp.read() )
+        data = fp.read()
+        data = data.replace( "array([[", "[[" )
+        data = data.replace( "]])", "]]" )
+        g = ast.literal_eval( data )
     
     return TPS_fromListToNumpy( g = g )
 
