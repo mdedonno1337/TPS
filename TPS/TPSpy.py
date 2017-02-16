@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 #  *-* coding: utf-8 *-*
 
+from __future__ import division, absolute_import
+
 from scipy.linalg.basic import solve, inv
 from scipy.spatial.distance import cdist
+
 import numpy as np
+
+from MDmisc.xfrange import xfrange
+
+from .config import CONF_maxx
+from .config import CONF_maxy
+from .config import CONF_minx
+from .config import CONF_miny
 
 ################################################################################
 #    Autre
@@ -164,9 +174,6 @@ def projo( **k ):
 #    Anti-error
 ################################################################################
 
-def r():
-    return
- 
 def revert():
     return
  
@@ -176,5 +183,53 @@ def image():
 def grid():
     return
  
-def range():
-    return
+def r( *args, **kwargs ):
+    if len( args ) == 5:
+        g, minx, maxx, miny, maxy = args
+    
+    else:
+        g = kwargs.get( "g" )
+        
+        minx = kwargs.get( "minx", CONF_minx )
+        maxx = kwargs.get( "maxx", CONF_maxx )
+        miny = kwargs.get( "miny", CONF_miny )
+        maxy = kwargs.get( "maxy", CONF_maxy )
+    
+    minx = int( minx )
+    maxx = int( maxx )
+    miny = int( miny )
+    maxy = int( maxy )
+    
+    nbstep = 200
+    stepx = ( maxx - minx ) / nbstep
+    stepy = ( maxy - miny ) / nbstep
+    
+    plist = []
+    
+    pprint( g )
+    
+    for x in xfrange( minx, maxx, stepx ):
+        p = projo( g = g, XY = [ x, miny ] )
+        plist.append( p )
+        
+        p = projo( g = g, XY = [ x, maxy ] )
+        plist.append( p )
+    
+    for y in xfrange( miny, maxy, stepy ):
+        p = projo( g = g, XY = [ minx, y ] )
+        plist.append( p )
+        
+        p = projo( g = g, XY = [ maxx, y ] )
+        plist.append( p )
+    
+    plist = np.array( plist )
+    
+    minx, miny = np.amin( plist, axis = 0 )[ 0 ]
+    maxx, maxy = np.amax( plist, axis = 0 )[ 0 ]
+    
+    return {
+        'minx': minx,
+        'miny': miny,
+        'maxx': maxx,
+        'maxy': maxy
+    }
