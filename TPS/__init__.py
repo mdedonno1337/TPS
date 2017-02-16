@@ -690,18 +690,19 @@ def TPS_range( **kwargs ):
     #        
     ############################################################################
     
-    if CythonModule == False:
-        raise NotImplementedError
+    g = kwargs.get( "g" )
     
-    else:
-        g = kwargs.get( "g" )
-        
-        minx = kwargs.get( "minx", CONF_minx )
-        maxx = kwargs.get( "maxx", CONF_maxx )
-        miny = kwargs.get( "miny", CONF_miny )
-        maxy = kwargs.get( "maxy", CONF_maxy )
-        
-        return TPSModule.r( g, minx, maxx, miny, maxy )
+    minx = kwargs.get( "minx", CONF_minx )
+    maxx = kwargs.get( "maxx", CONF_maxx )
+    miny = kwargs.get( "miny", CONF_miny )
+    maxy = kwargs.get( "maxy", CONF_maxy )
+    
+    minx = int( minx )
+    maxx = int( maxx )
+    miny = int( miny )
+    maxy = int( maxy )
+    
+    return TPSModule.r( g, minx, maxx, miny, maxy )
 
 def TPS_revertGrid( **kwargs ):
     ############################################################################
