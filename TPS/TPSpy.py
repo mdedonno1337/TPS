@@ -23,7 +23,7 @@ def unit_vector( vector ):
     v = vector / np.linalg.norm( vector )
     return v
 
-def angle_between( v1, deg = False ):
+def _angle( v1, deg = False ):
     v1_u = unit_vector( v1 )
     v2_u = np.array( ( 1, 0 ) )
     
@@ -127,7 +127,7 @@ def project( *args, **kwargs ):
         
         p2 = _p( XY, linear, W, src )
 
-        ang = angle_between( p2 - p, deg = True )
+        ang = _angle( p2 - p, deg = True )
                 
         p = np.insert( p, 2, ang )
         
