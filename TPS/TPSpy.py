@@ -24,17 +24,22 @@ def unit_vector( vector ):
     return v
 
 def _angle( v1, deg = False ):
-    v1_u = unit_vector( v1 )
-    v2_u = np.array( ( 1, 0 ) )
+    v2 = np.array( ( 1, 0 ) )
     
-    angle = np.arccos( np.dot( v1_u, v2_u ) )
+    return angle_between( v1, v2, deg )
+    
+def angle_between( v1, v2, deg = False ):
+    v1 = unit_vector( v1 )
+    v2 = unit_vector( v2 )
+    
+    angle = np.arccos( np.dot( v1, v2 ) )
     if np.isnan( angle ):
-        if ( v1_u == v2_u ).all():
+        if ( v1 == v2 ).all():
             return 0.0
         else:
             return None
     
-    if v1_u[1] < 0:
+    if v1[1] < 0:
         angle = 2 * np.pi - angle
     
     angle = np.mod( angle, 2 * np.pi )
