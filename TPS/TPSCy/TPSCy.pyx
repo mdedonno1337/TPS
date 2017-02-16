@@ -235,7 +235,7 @@ def generate(
     #        the memory space given in the pointers (W, linear and be).
     #
     #        The memory allocation is almost stable for any matrix size (between
-    #        ~10^-5 and ~10^4 seconds between n = 5 and n = 1000). The gain
+    #        ~10^-5 and ~10^-4 seconds between n = 5 and n = 1000). The gain
     #        in time is important compared with the python implementation
     #        (almost 2 orders of magnitude with the memory allocation and the
     #        _generate call).
