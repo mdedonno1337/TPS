@@ -501,7 +501,10 @@ def TPS_Image( **kwargs ):
         #        Because the borders could be in negative coordinate
         ############################################################################
         
-        r = TPSModule.r( g, 0, maxx, 0, maxy )
+        r = kwargs.get( 'r', None )
+        
+        if r == None:
+            r = TPSModule.r( g, 0, int( maxx ), 0, int( maxy ) )
         
         size = [
             int( float( res ) / 25.4 * ( r[ 'maxx' ] - r[ 'minx' ] ) ),
