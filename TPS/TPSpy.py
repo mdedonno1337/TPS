@@ -208,8 +208,6 @@ def r( *args, **kwargs ):
     
     plist = []
     
-    pprint( g )
-    
     for x in xfrange( minx, maxx, stepx ):
         p = projo( g = g, XY = [ x, miny ] )
         plist.append( p )
