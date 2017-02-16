@@ -155,11 +155,11 @@ def TPS_project( *args, **kwargs ):
             theta = kwargs.get( 'theta', None )
     
     if theta == None:
-        x, y, _ = TPSModule.project( g, x, y, 0 )
+        x, y, _ = TPSModule.project( g = g, x = x, y = y, theta = 0 )
         return x, y
     
     else:
-        x, y, theta = TPSModule.project( g, x, y, theta )
+        x, y, theta = TPSModule.project( g = g, x = x, y = y, theta = theta )
         return x, y, theta
 
 def TPS_project_list( *args, **kwargs ):
@@ -394,7 +394,7 @@ def TPS_Image( **kwargs ):
     #            
     #            @param 'g' : TPS parameters
     #            @type  'g' : python dictionary
-    #            @rem   'g' : Exclusive with 'g'
+    #            @rem   'g' : Exclusive with 'gfile'
     #                       
     #        Optional:
     #            @param 'res' : Resolution of the input and output image
@@ -403,7 +403,6 @@ def TPS_Image( **kwargs ):
     #                       
     #            @param 'outfile' : URI to the output image file
     #            @type  'outfile' : string
-    #            @rem   'outfile' : Exclusive with 'g'
     #            
     #            @param 'reverseFullGrid' : Use the full-grid to revert the 'g' function (SLOW !)
     #            @type  'reverseFullGrid' : boolean
@@ -413,7 +412,7 @@ def TPS_Image( **kwargs ):
     #            @type  'useWeights' : boolean
     #            @def   'useweights' : True
     #                       
-    #            @param 'gridSize' : Size of the grid to calclate the revert function
+    #            @param 'gridSize' : Size of the grid to caculate the revert function
     #            @type  'gridSize' : float
     #            @def   'gridSize' : 0.75
     #                       
