@@ -9,6 +9,7 @@ from pprint import pprint
 import random
 import sys
 
+from PIL import ImageDraw, ImageFont, Image
 from scipy import misc
 
 import numpy as np
@@ -627,9 +628,15 @@ def TPS_Grid( **kwargs ):
         #    Cython calls
         ############################################################################
         
-        outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm )
+        if g[ 'be' ] < 10:
+            outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm )
+            outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
         
-        outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
+        else:
+            outimg = Image.new( "RGB", ( res, res ), ( 240, 240, 240 ) )
+            draw = ImageDraw.Draw( outimg )
+            font = ImageFont.truetype( "arial.ttf", 16 )
+            draw.text( ( 50, 50 ), "No distorsion grid available:\nBending Energy to high.\nPlease check the pairing.", ( 0, 0, 0 ), font = font )
         
         ############################################################################
         #    Image writting on disk or return as numpy.array
