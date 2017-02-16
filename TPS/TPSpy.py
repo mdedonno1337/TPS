@@ -132,8 +132,10 @@ def project( *args, **kwargs ):
     else:
         return p
 
-def projo( **k ):
+def projo( *a, **k ):
     XY = k.pop( "XY" )
+    if type( XY ) in [ tuple, list ]:
+        XY = np.array( [ XY ] )
     
     g = k.pop( "g", None )
     if g != None:
