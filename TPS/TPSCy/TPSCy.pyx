@@ -248,11 +248,14 @@ def generate(
     cdef double * W      = < double * > malloc( n * 2 * sizeof( double ) )
     cdef double * linear = < double * > malloc( 3 * 2 * sizeof( double ) )
     cdef double * be     = < double * > malloc( 1 *     sizeof( double ) )
+    cdef double * scale  = < double * > malloc( 1 *     sizeof( double ) )
     
     _generate(
         src, dst,     # input variables
         W, linear, be # output storage
     )
+    
+    scale[ 0 ] = sqrt( ( linear[ 2 ] * linear[ 5 ] ) - ( linear[ 3 ] * linear[ 4 ] ) )
     
     ############################################################################
     #    
@@ -264,6 +267,7 @@ def generate(
         'src':      np.asarray( src ),
         'dst':      np.asarray( dst ),
         'linear':   np.array( < double [ :3, :2 ] > linear ),
+        'scale':    scale[ 0 ],
         'weights':  np.array( < double [ :n, :2 ] > W ),
         'be':       be[ 0 ],
     }

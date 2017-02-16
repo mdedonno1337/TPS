@@ -78,6 +78,8 @@ def generate( src, dst ):
     W = Wa[ :-3 , : ]
     a = Wa[ -3: , : ]
     
+    s = np.sqrt( np.linalg.det( Wa[ -2: , : ] ) )
+    
     WK = np.dot( W.T, K )
     WKW = np.dot( WK, W )
     
@@ -87,6 +89,7 @@ def generate( src, dst ):
         'src':      src,
         'dst':      dst,
         'linear':   a,
+        'scale':    s,
         'weights':  W,
         'be':       be
     }
