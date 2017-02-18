@@ -84,6 +84,7 @@ def generate( src, dst ):
     a = Wa[ -3: , : ]
     
     scale = np.sqrt( np.linalg.det( Wa[ -2: , : ] ) )
+    shearing = angle_between( Wa[ -2: , 0 ], Wa[ -2: , 1 ], True )
     
     WK = np.dot( W.T, K )
     WKW = np.dot( WK, W )
@@ -95,6 +96,7 @@ def generate( src, dst ):
         'dst':      dst,
         'linear':   a,
         'scale':    scale,
+        'shearing': shearing,
         'weights':  W,
         'be':       be
     }

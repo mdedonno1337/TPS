@@ -249,6 +249,7 @@ def generate(
     cdef double * linear = < double * > malloc( 3 * 2 * sizeof( double ) )
     cdef double * be     = < double * > malloc( 1 *     sizeof( double ) )
     cdef double * scale  = < double * > malloc( 1 *     sizeof( double ) )
+    cdef double * shearing=< double * > malloc( 1 *     sizeof( double ) )
     
     _generate(
         src, dst,     # input variables
@@ -256,6 +257,7 @@ def generate(
     )
     
     scale[ 0 ] = sqrt( ( linear[ 2 ] * linear[ 5 ] ) - ( linear[ 3 ] * linear[ 4 ] ) )
+    shearing[ 0 ] = _angle_between( linear[ 2 ], linear[ 4 ], linear[ 3 ], linear[ 5 ], 1 )
     
     ############################################################################
     #    
@@ -268,6 +270,7 @@ def generate(
         'dst':      np.asarray( dst ),
         'linear':   np.array( < double [ :3, :2 ] > linear ),
         'scale':    scale[ 0 ],
+        'shearing': shearing[ 0 ],
         'weights':  np.array( < double [ :n, :2 ] > W ),
         'be':       be[ 0 ],
     }
