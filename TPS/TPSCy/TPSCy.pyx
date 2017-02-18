@@ -1096,6 +1096,50 @@ cdef double _angle(
         return angle / M_PI * 180.0
     else:
         return angle
+
+def angle_between(
+        double a,
+        double b,
+        double c,
+        double d,
+        bint deg = 0,
+    ):
+    return _angle_between( a, b, c, d, deg )
+
+cdef double _angle_between(
+        double a,
+        double b,
+        double c,
+        double d,
+        bint deg = 0,
+    ):
+    cdef double angle = 0
+    
+    cdef double nv1 = sqrt( a * a + b * b ) 
+    cdef double nv2 = sqrt( c * c + d * d ) 
+    
+    a /= nv1
+    b /= nv1
+    c /= nv2
+    d /= nv2
+    
+    if a == c and b == d:
+        return angle
+    
+    else:
+        angle =  acos( a * c + b * d )
+        
+        if b < 0:
+            angle = 2 * M_PI - angle
+        
+        angle = angle % ( 2 * M_PI )
+        
+        if deg == 0:
+            return angle
+        
+        else:
+            return angle / M_PI * 180
+    
 ################################################################################
 #    Point projection
 ################################################################################
