@@ -83,19 +83,26 @@ def generate( src, dst ):
     W = Wa[ :-3 , : ]
     a = Wa[ -3: , : ]
     
-    scale = np.sqrt( np.linalg.det( Wa[ -2: , : ] ) )
+    surfaceratio = np.linalg.det( Wa[ -2: , : ] )
+    scale = np.sqrt( np.abs( surfaceratio ) )
+    if surfaceratio < 0:
+        mirror = True
+    else:
+        mirror = False
+    
     shearing = angle_between( Wa[ -2: , 0 ], Wa[ -2: , 1 ], True )
     
     WK = np.dot( W.T, K )
     WKW = np.dot( WK, W )
     
-    be = 0.5 * np.trace( WKW )
+    be = max( 0.5 * np.trace( WKW ), 0 )
     
     return {
         'src':      src,
         'dst':      dst,
         'linear':   a,
         'scale':    scale,
+        'mirror':   mirror,
         'shearing': shearing,
         'weights':  W,
         'be':       be
