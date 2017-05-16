@@ -3,17 +3,17 @@
 
 from __future__ import division, absolute_import
 
+from math import ceil
+from PIL import Image
 from scipy.linalg.basic import solve, inv
 from scipy.spatial.distance import cdist
 
 import numpy as np
 
+from MDmisc import fuckit
 from MDmisc.xfrange import xfrange
 
-from .config import CONF_maxx
-from .config import CONF_maxy
-from .config import CONF_minx
-from .config import CONF_miny
+from .config import *
 
 ################################################################################
 #    Autre
@@ -199,8 +199,69 @@ def revert():
 def image():
     return
  
-def grid():
-    return
+def grid( *args, **kwargs ):
+    g = kwargs.get( "g" )
+    res = kwargs.get( "res", CONF_res )
+    minx = kwargs.get( "minx", CONF_minx )
+    maxx = kwargs.get( "maxx", CONF_maxx )
+    miny = kwargs.get( "miny", CONF_miny )
+    maxy = kwargs.get( "maxy", CONF_maxy )
+    
+    major_step = 1
+    minor_step = 0.02
+    dm = kwargs.get( "dm", 5 )
+    
+    ############################################################################
+    #    Upsampling the range, to avoid the open sqare of the grid
+    ############################################################################
+    
+    dx = maxx - minx
+    dy = maxy - miny
+     
+    maxx = minx + ceil( dx / major_step ) * major_step
+    maxy = miny + ceil( dy / major_step ) * major_step
+    
+    ############################################################################
+    #    Determination of the distortion range
+    ############################################################################
+    
+    range = r( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy )
+    
+    sizex = int( ( 1 + float( res ) / 25.4 * ( range[ 'maxx' ] - range[ 'minx' ] ) ) + 2 * dm )
+    sizey = int( ( 1 + float( res ) / 25.4 * ( range[ 'maxy' ] - range[ 'miny' ] ) ) + 2 * dm )
+    
+    size = [ sizex, sizey ]
+    
+    ############################################################################
+    #    Creation of the grid
+    #        major_step is the distance between lines in the grid 
+    #        minor_step is the distance between two consecutive points on a line
+    ############################################################################
+    
+    img = Image.new( "RGBA", size, ( 255, 255, 255, 0 ) )
+    pixels = img.load()
+    
+    for i in xfrange( minx, maxx, major_step ):
+        for j in xfrange( miny, maxy, minor_step ):
+            x, y = project( x = i, y = j, g = g )
+            
+            xp = int( ( x - range[ 'minx' ] ) * float( res ) / 25.4 )
+            yp = int( ( y - range[ 'miny' ] ) * float( res ) / 25.4 )
+            
+            with fuckit:
+                pixels[ xp + dm, sizey - ( yp + dm ) ] = 0
+            
+    for i in xfrange( miny, maxy, major_step ):
+        for j in xfrange( minx, maxx, minor_step ):
+            x, y = project( x = j, y = i, g = g )
+            
+            xp = int( ( x - range[ 'minx' ] ) * float( res ) / 25.4 )
+            yp = int( ( y - range[ 'miny' ] ) * float( res ) / 25.4 )
+            
+            with fuckit:
+                pixels[ xp + dm, sizey - ( yp + dm ) ] = 0
+    
+    return img
  
 def r( *args, **kwargs ):
     if len( args ) == 5:
