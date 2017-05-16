@@ -18,7 +18,6 @@ from .config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
     CONF_maxx, CONF_miny, CONF_maxy, CONF_dm, CONF_useWeights, CONF_weightsLimit, \
     CONF_nbRandom
 
-
 try:
     from . import TPSCy as TPSModule
     CythonModule = True
@@ -614,44 +613,40 @@ def TPS_Grid( **kwargs ):
     #        ( minx, maxx, miny maxy ) arguments
     ############################################################################
     
-    if CythonModule == False:
-        raise NotImplementedError
+    g = kwargs.get( "g" )
     
+    minx = kwargs.get( "minx", CONF_minx )
+    maxx = kwargs.get( "maxx", CONF_maxx )
+    miny = kwargs.get( "miny", CONF_miny )
+    maxy = kwargs.get( "maxy", CONF_maxy )
+    
+    outfile = kwargs.get( "outfile", None )
+    
+    res = kwargs.get( "res", CONF_res )
+    dm = kwargs.get( "dm", CONF_dm )
+    
+    limit = kwargs.get( "limit", False )
+    if limit != False and g[ 'be' ] > float( limit ):
+        outimg = Image.new( "RGB", ( res, res ), ( 240, 240, 240 ) )
+        draw = ImageDraw.Draw( outimg )
+        font = ImageFont.truetype( "arial.ttf", 16 )
+        draw.text( ( 50, 50 ), "No distorsion grid available:\nBending Energy to high.\nPlease check the pairing.", ( 0, 0, 0 ), font = font )
+        
     else:
-        g = kwargs.get( "g" )
-        
-        minx = kwargs.get( "minx", CONF_minx )
-        maxx = kwargs.get( "maxx", CONF_maxx )
-        miny = kwargs.get( "miny", CONF_miny )
-        maxy = kwargs.get( "maxy", CONF_maxy )
-        
-        outfile = kwargs.get( "outfile", None )
-        
-        res = kwargs.get( "res", CONF_res )
-        dm = kwargs.get( "dm", CONF_dm )
-        
-        ############################################################################
-        #    Cython calls
-        ############################################################################
-        
-        if g[ 'be' ] < 10:
+        if CythonModule:
             outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm )
             outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
-        
         else:
-            outimg = Image.new( "RGB", ( res, res ), ( 240, 240, 240 ) )
-            draw = ImageDraw.Draw( outimg )
-            font = ImageFont.truetype( "arial.ttf", 16 )
-            draw.text( ( 50, 50 ), "No distorsion grid available:\nBending Energy to high.\nPlease check the pairing.", ( 0, 0, 0 ), font = font )
-        
-        ############################################################################
-        #    Image writting on disk or return as numpy.array
-        ############################################################################
-        
-        if outfile != None:
-            outimg.save( outfile, dpi = ( res, res ) )
-        else:
-            return outimg
+            outimg = TPSModule.grid( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy, res = res, dm = dm )
+    
+    ############################################################################
+    #    Image writting on disk or return as numpy.array
+    ############################################################################
+    
+    if outfile != None:
+        outimg.save( outfile, dpi = ( res, res ) )
+    else:
+        return outimg
 
 def TPS_range( **kwargs ):
     ############################################################################
