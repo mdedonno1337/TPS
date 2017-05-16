@@ -14,9 +14,7 @@ from scipy import misc
 
 import numpy as np
 
-from .config import CONF_gridSize, CONF_res, CONF_ncores, CONF_minx, \
-    CONF_maxx, CONF_miny, CONF_maxy, CONF_dm, CONF_useWeights, CONF_weightsLimit, \
-    CONF_nbRandom
+from .config import *
 
 try:
     from . import TPSCy as TPSModule
@@ -624,6 +622,8 @@ def TPS_Grid( **kwargs ):
     
     res = kwargs.get( "res", CONF_res )
     dm = kwargs.get( "dm", CONF_dm )
+    minor_step = kwargs.get( "minor_step", CONF_minorstep )
+    major_step = kwargs.get( "major_step", CONF_majorstep )
     
     limit = kwargs.get( "limit", False )
     if limit != False and g[ 'be' ] > float( limit ):
@@ -634,10 +634,10 @@ def TPS_Grid( **kwargs ):
         
     else:
         if CythonModule:
-            outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm )
+            outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm, minor_step = minor_step, major_step = major_step )
             outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
         else:
-            outimg = TPSModule.grid( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy, res = res, dm = dm )
+            outimg = TPSModule.grid( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy, res = res, dm = dm, minor_step = minor_step, major_step = major_step )
     
     ############################################################################
     #    Image writting on disk or return as numpy.array

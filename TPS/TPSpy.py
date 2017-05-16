@@ -207,9 +207,9 @@ def grid( *args, **kwargs ):
     miny = kwargs.get( "miny", CONF_miny )
     maxy = kwargs.get( "maxy", CONF_maxy )
     
-    major_step = 1
-    minor_step = 0.02
-    dm = kwargs.get( "dm", 5 )
+    minor_step = kwargs.get( "minor_step", CONF_minorstep )
+    major_step = kwargs.get( "major_step", CONF_majorstep )
+    dm = kwargs.get( "dm", CONF_dm )
     
     ############################################################################
     #    Upsampling the range, to avoid the open sqare of the grid
