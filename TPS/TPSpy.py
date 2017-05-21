@@ -238,7 +238,7 @@ def grid( *args, **kwargs ):
     #        minor_step is the distance between two consecutive points on a line
     ############################################################################
     
-    img = Image.new( "RGBA", size, ( 255, 255, 255, 0 ) )
+    img = Image.new( "L", size, 255 )
     pixels = img.load()
     
     for i in xfrange( minx, maxx, major_step ):
