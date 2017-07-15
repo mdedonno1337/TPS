@@ -103,8 +103,8 @@ def TPS_generate( *args, **kwags ):
         src = kwags.get( 'src' )
         dst = kwags.get( 'dst' )
     
-    src = np.array( src )
-    dst = np.array( dst )
+    src = np.array( src, dtype = np.double )
+    dst = np.array( dst, dtype = np.double )
     
     return TPSModule.generate( src, dst )
 
@@ -232,7 +232,7 @@ def TPS_fromListToNumpy( *args, **kwargs ):
         g = kwargs.get( 'g' )
     
     for var in [ 'src', 'dst', 'linear', 'weights' ]:
-        g[ var ] = np.array( g[ var ] )
+        g[ var ] = np.array( g[ var ], dtype = np.double )
     
     return g
 
@@ -267,8 +267,8 @@ def TPS_recenter( *args, **kwargs ):
         cx = kwargs.get( "cx", 0 )
         cy = kwargs.get( "cy", 0 )
     
-    g[ 'src' ] += np.array( [ [ cx, cy ] ] )
-    g[ 'dst' ] += np.array( [ [ cx, cy ] ] )
+    g[ 'src' ] += np.array( [ [ cx, cy ] ], dtype = np.double )
+    g[ 'dst' ] += np.array( [ [ cx, cy ] ], dtype = np.double )
     
     return g
 
@@ -302,7 +302,7 @@ def TPS_shift( *args, **kwargs ):
         cx = kwargs.get( "cx", 0 )
         cy = kwargs.get( "cy", 0 )
     
-    g[ 'linear' ] += np.array( [ [ cx, cy ], [ 0, 0 ], [ 0, 0 ] ] )
+    g[ 'linear' ] += np.array( [ [ cx, cy ], [ 0, 0 ], [ 0, 0 ] ], dtype = np.double )
     
     return g
 
@@ -335,7 +335,7 @@ def TPS_rotate( **kwargs ):
     theta = theta / 180.0 * np.pi
     
     c, s = np.cos( theta ), np.sin( theta )
-    rotmat = np.array( [ [ c, -s ], [ s, c ] ] )
+    rotmat = np.array( [ [ c, -s ], [ s, c ] ], dtype = np.double )
     
     rot = g[ 'linear' ][ 1:, : ]
     rotbis = np.dot( rot, rotmat )
