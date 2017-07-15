@@ -1,3 +1,7 @@
 sample/
 void*.py
 *.pyc
+*.pyd
+TPS/TPSCy/build/
+TPS/TPSCy/TPSCy.c
+test/
