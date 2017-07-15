@@ -177,7 +177,7 @@ cdef void _matrix_self_euclidean_dist(
     #        compute the _matrix_self_euclidean_dist matrix, the use of multiple
     #        cores on small matrices is useless, and more time consuming. If
     #        the matrix is greater than 150 x 150, then the use of 4 processors
-    #        is the more effective.
+    #        is the more efficient.
     #
     ############################################################################
     
@@ -210,7 +210,7 @@ cdef void _U(
     #    
     #    U function
     #
-    #        Implementation of the U function.
+    #        Implementation of the U function as defined by Bookstein.
     #
     #        Even if the U function could be applied on multiples processors,
     #        the time to calculate the TPS parameters is shorter on one core.
@@ -259,6 +259,7 @@ def generate(
     cdef double * scale  = < double * > malloc( 1 *     sizeof( double ) )
     cdef double * shearing=< double * > malloc( 1 *     sizeof( double ) )
     
+    # Call of the pure-C function
     _generate(
         src, dst,     # input variables
         W, linear, be # output storage
@@ -522,8 +523,8 @@ cdef void _generate(
     #
     #            cdef double * WKW_container = < double * > malloc( 2 * 2 * sizeof( double ) )
     #                
-    #                for i from 0 <= i < 4:
-    #                    WKW_container[ i ] = 0
+    #            for i from 0 <= i < 4:
+    #                WKW_container[ i ] = 0
     #           
     #            for j from 0 <= j < 2:
     #                for i from 0 <= i < 2:
