@@ -253,11 +253,11 @@ def generate(
     cdef int n = src.shape[ 0 ]
     
     # Memory allocation C-pointer-style
-    cdef double * W      = < double * > malloc( n * 2 * sizeof( double ) )
-    cdef double * linear = < double * > malloc( 3 * 2 * sizeof( double ) )
-    cdef double * be     = < double * > malloc( 1 *     sizeof( double ) )
-    cdef double * scale  = < double * > malloc( 1 *     sizeof( double ) )
-    cdef double * shearing=< double * > malloc( 1 *     sizeof( double ) )
+    cdef double * W         = < double * > malloc( n * 2 * sizeof( double ) )
+    cdef double * linear    = < double * > malloc( 3 * 2 * sizeof( double ) )
+    cdef double * be        = < double * > malloc( 1 *     sizeof( double ) )
+    cdef double * scale     = < double * > malloc( 1 *     sizeof( double ) )
+    cdef double * shearing  = < double * > malloc( 1 *     sizeof( double ) )
     
     # Call of the pure-C function
     _generate(
