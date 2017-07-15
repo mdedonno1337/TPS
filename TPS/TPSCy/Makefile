@@ -21,7 +21,7 @@ endif
 ################################################################################
 ###		Compilation
 
-all: c $(EXT)
+all build: c $(EXT)
 
 c: cleanc
 	cython -V -v $(MODNAME).pyx
