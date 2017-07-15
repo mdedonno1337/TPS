@@ -40,6 +40,7 @@
 #             └──────────────────────────────────────────────────┘                             
 #
 ################################################################################
+
 ################################################################################
 #    
 #    Cythonization options
@@ -54,12 +55,14 @@
 #        debug the code...
 #
 ################################################################################
+
 #cython: boundscheck      = False
 #cython: wraparound       = False
 #cython: nonecheck        = False
 #cython: initializedcheck = False
 #cython: embedsignature   = True
 #cython: cdivision        = True
+
 from scipy.linalg.basic     import solve, inv
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -67,12 +70,14 @@ import numpy as np
 cimport cython
 cimport numpy as np
 cimport scipy.linalg.cython_lapack as cython_lapack
+
 from cython.parallel        cimport parallel, prange, threadid
 from cython.view            cimport array as cvarray
 from libc.math              cimport log, exp, sqrt
 from libc.math              cimport floor, ceil, round
 from libc.math              cimport sin, cos, tan, acos, M_PI
 from libc.stdlib            cimport malloc, free
+
 ################################################################################
 #
 #    Memory allocation
@@ -132,6 +137,7 @@ from libc.stdlib            cimport malloc, free
 #                                                       ||----w |
 #                                                       ||     ||
 ################################################################################
+
 cdef double _euclidean_dist(
         double a_x,
         double a_y,
@@ -153,6 +159,7 @@ cdef double _euclidean_dist(
         ( b_x - a_x ) ** 2 +
         ( b_y - a_y ) ** 2
     )
+
 cdef void _matrix_self_euclidean_dist(
         double [ : , : ] input,
         double * ret
@@ -193,6 +200,7 @@ cdef void _matrix_self_euclidean_dist(
                         ret[ i + j * n ] = 0
                     else:
                         ret[ i + j * n ] = _euclidean_dist( input[ i, 0 ], input[ i, 1 ], input[ j, 0 ], input[ j, 1 ] )
+
 cdef void _U(
         double * vec,
         long n
@@ -451,6 +459,7 @@ cdef void _generate(
         V_container, &nbis,
         &info
     )
+    
     ############################################################################
     #
     #    Separation between linear and non-linear distortion
@@ -489,6 +498,7 @@ cdef void _generate(
     #        the "WKW_container", and returned as a double variable.
     #
     ############################################################################
+    
     cdef double * WK_container = < double * > malloc( n * 2 * sizeof( double ) )
     
     for i from 0 <= i < ( n * 2 ):
@@ -564,7 +574,6 @@ cdef void _generate(
     
     for i from 0 <= i < n:
         for j from 0 <= j < 2:
-            
             #         row       col                    col       row
             #      ---------   -----                  -----   ---------
             out_W[ ( 2 * i ) + ( j ) ] = W_container[ ( i ) + ( j * n ) ]
@@ -588,10 +597,7 @@ cdef void _generate(
     free( W_container   )
     free( a_container   )
     free( WK_container  )
-################################################################################
-#    Reverting function
-################################################################################
-  
+
 def revert( 
         dict g,
         np.float64_t minx,
@@ -600,6 +606,21 @@ def revert(
         np.float64_t maxy,
         np.float64_t step
     ):
+    
+    ############################################################################
+    #
+    #    Reverting function
+    #
+    #        Function to "revert" a TPS function:
+    #
+    #            1. Project a grid with the TPS function
+    #            2. Use the projected points as src, and initial grid as dst
+    #            3. Calculate the TPS function
+    #
+    #        Since the TPS projection function is not bijective, This ugly
+    #        method is the only one capable of estimate the reverted TPS function.
+    #
+    ############################################################################
     
     src2 = []
     dst2 = []
@@ -629,9 +650,7 @@ def revert(
     dst2 = np.asarray( dst2, dtype = np.float64 )
     
     return generate( src2, dst2 )
-################################################################################
-#    Range function
-################################################################################
+
 def r(
         dict g not None,
         
@@ -640,6 +659,18 @@ def r(
         np.float64_t miny,
         np.float64_t maxy
     ):
+    
+    ############################################################################
+    #
+    #    Range function
+    #
+    #        This function allow to calculate the coordinates of the border
+    #        (rectangle of coordinates ((minx, maxx), (miny, maxy)). This
+    #        function is fundamental to calculate the offset of a TPS projection
+    #        function since the coordinates, in the TPS space, can be negative.
+    #        The coordinate in the Image space can not be negative.
+    #
+    ############################################################################
     
     cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = g[ 'weights' ]
     cdef double[ : , : ] W_view = W
@@ -652,6 +683,7 @@ def r(
     
     cdef double out[ 4 ]
     cdef double[ : ] out_view = out
+    
     _r( linear_view, W_view, src_view, minx, maxx, miny, maxy, out_view )
     
     return {
@@ -674,6 +706,14 @@ cdef void _r(
         double[ : ] ret
     ):
     
+    ############################################################################
+    # 
+    #    Range function - Pure C
+    #
+    #        Pure C implementation of the r() function.
+    #
+    ############################################################################
+    
     cdef double cx = 0.5 * ( minx + maxx )
     cdef double cy = 0.5 * ( miny + maxy )
      
@@ -686,6 +726,7 @@ cdef void _r(
     cdef double retmaxx = cx
     cdef double retminy = cy
     cdef double retmaxy = cy
+    
     ############################################################################
     #    Preparation of the borders
     ############################################################################
@@ -743,11 +784,12 @@ cdef void _r(
     ret[ 2 ] = retminy
     ret[ 3 ] = retmaxy
     
+    ############################################################################
+    #    Garbage collector
+    ############################################################################
+    
     free( t )
     
-################################################################################
-#    Image projection
-################################################################################
 def image(
         long[ : , : ] indata,
         dict g not None,
@@ -756,8 +798,7 @@ def image(
         long[ : , : ] voidimg,
         int ncore = 8
     ):
-    # TODO: penser à faire un wrapper plus propre ?
-    
+
     ############################################################################
     #    
     #    Image distortion function
@@ -896,9 +937,7 @@ def image(
                         )
                 
                 voidimg[ x, y ] = c
-################################################################################
-#    Distorsion grid
-################################################################################
+
 def grid(
         dict g not None,
         
@@ -914,6 +953,14 @@ def grid(
         
         int dm = 5
     ):
+    
+    ############################################################################
+    #
+    #    Distorsion grid
+    #
+    #        Creation of the distorsion grid passed in argument.
+    #
+    ############################################################################
     
     ############################################################################
     #    Parsing of the parameters in memoryview for fast access
@@ -944,6 +991,7 @@ def grid(
     
     cdef double range[ 4 ]
     cdef double[ : ] range_view = range
+    
     _r( linear_view, W_view, src_view, minx, maxx, miny, maxy, range_view )
     
     cdef double rminx = range[0]
@@ -1013,12 +1061,11 @@ def grid(
     outimg = np.flipud( outimg )
     
     return outimg
-################################################################################
-#    Angle function
-################################################################################
+
 cdef double _norm(
         double [ : ] vector
     ):
+    
     ############################################################################
     #    
     #    Norm
@@ -1036,9 +1083,11 @@ cdef double _norm(
     ############################################################################
     
     return sqrt( vector[ 0 ] * vector[ 0 ] + vector[ 1 ] * vector[ 1 ] )
+
 cdef void _unit_vector(
         double [ : ] vector
     ):
+    
     ############################################################################
     #    
     #    Unit vector
@@ -1060,10 +1109,12 @@ cdef void _unit_vector(
     
     vector[ 0 ] /= n
     vector[ 1 ] /= n
+
 cdef double _angle(
         double [ : ] vector,
         bint deg = 1
     ):
+    
     ############################################################################
     #    
     #    Angle calculation
@@ -1107,6 +1158,16 @@ def angle_between(
         double d,
         bint deg = 0,
     ):
+    
+    ############################################################################
+    # 
+    #    angle_between
+    #
+    #        Calculate the angle between two vectors ( a, b ) and ( c, d ),
+    #        passed to the function as ( a, b, c, d ).
+    # 
+    ############################################################################
+    
     return _angle_between( a, b, c, d, deg )
 
 cdef double _angle_between(
@@ -1116,6 +1177,15 @@ cdef double _angle_between(
         double d,
         bint deg = 0,
     ):
+    
+    ############################################################################
+    # 
+    #    _angle_between
+    #
+    #        Pure-C implementation of the angle_between function
+    # 
+    ############################################################################
+    
     cdef double angle = 0
     
     cdef double nv1 = sqrt( a * a + b * b ) 
@@ -1143,9 +1213,6 @@ cdef double _angle_between(
         else:
             return angle / M_PI * 180
     
-################################################################################
-#    Point projection
-################################################################################
 def project(
         dict g,
         
@@ -1155,7 +1222,6 @@ def project(
         
         double dh = 0.01
     ):
-    #TODO: préparer un double wrapper : un pour l'accès ( x, y, theta, g ), et un autre depuis Cython avec des memoryview
     
     ############################################################################
     #    
@@ -1231,6 +1297,7 @@ def project(
     ang = _angle( dp_view )
     
     return p1[0], p1[1], ang
+
 cdef void _project( 
         double x,
         double y,
