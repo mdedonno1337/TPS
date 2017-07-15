@@ -19,6 +19,7 @@ from .config import *
 try:
     from . import TPSCy as TPSModule
     CythonModule = True
+
 except:
     from . import TPSpy as TPSModule
     CythonModule = False

@@ -742,16 +742,16 @@ cdef void _r(
         _project( x, miny, linear, W, src, out_view )
         t[ i ], t[ i + 1 ] = out
         i += 2
-         
+        
         _project( x, maxy, linear, W, src, out_view )
         t[ i ], t[ i + 1 ] = out
         i += 2
-    
+        
     for y from miny <= y <= maxy by ( maxy - miny ) / float( nbstep ):
         _project( minx, y, linear, W, src, out_view )
         t[ i ], t[ i + 1 ] = out
         i += 2
-         
+        
         _project( maxx, y, linear, W, src, out_view )
         t[ i ], t[ i + 1 ] = out
         i += 2
