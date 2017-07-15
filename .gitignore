@@ -6,3 +6,5 @@ TPS/TPSCy/build/
 TPS/TPSCy/TPSCy.c
 test/
 doc/
+tmp/
+TPS/version.py
