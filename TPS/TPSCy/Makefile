@@ -19,21 +19,35 @@ else
 endif
 
 ################################################################################
-###		Rules
+###		Compilation
 
-all: clean c $(EXT)
+all: c $(EXT)
 
-c:
-	cython $(MODNAME).pyx
+c: cleanc
+	cython -V -v $(MODNAME).pyx
 
-$(EXT) gcc compile:
+$(EXT) gcc compile: clean$(EXT)
 	python setup.py build_ext --inplace $(OPTS)
 
-clean clear cls:
-	-rm $(MODNAME).$(EXT)
+a annotate html: cleanhtml
+	cython -a $(MODNAME).pyx
+
+################################################################################
+###		Cleaning functions
+
+cleanc:
 	-rm $(MODNAME).c
+
+clean$(EXT):
+	-rm $(MODNAME).$(EXT)
+
+cleanhtml:
 	-rm $(MODNAME).html
+
+cleanbuild:
 	-rm -rf ./build
 
-a annotate html:
-	cython -a $(MODNAME).pyx
+clean clear cls:
+	$(MAKE) cleanc
+	$(MAKE) cleanhtml
+	$(MAKE) cleanbuild
