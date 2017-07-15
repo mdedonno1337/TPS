@@ -13,10 +13,10 @@ import numpy as np
 from MDmisc import fuckit
 from MDmisc.xfrange import xfrange
 
-from .config import *
+from ..config import *
 
 ################################################################################
-#    Autre
+#    Misc functions
 ################################################################################
 
 def unit_vector( vector ):
