@@ -33,11 +33,7 @@ except:
 #    TPSCy module should not (but can) be called directly.
 #    
 #    All codes should be platform-independant. A recompilation of the TPSCy
-#    module is however needed. The debugging process on UNIX show some tweeks to
-#    do, but nothing dramatically impossible (some duplicated memory free'ing).
-#    The actual Scipy UNIX release (0.16.1) has incompatibility with the BLAS
-#    library; fix present on the github, and will be patched in the 0.17.0
-#    release.
+#    module is however needed.
 #    
 #    Some dependencies are needed:
 #    
@@ -56,7 +52,10 @@ except:
 #    
 #                                               Marco De Donno
 #                                               University of Lausanne
-#                                               
+#
+#                                               Marco.DeDonno@unil.ch
+#                                               mdedonno1337@gmail.com
+#
 #    
 #    References:                                                                
 #        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the   
@@ -80,25 +79,23 @@ except:
 
 def TPS_generate( *args, **kwags ):
     """
-        TPS parameter function
-    
         Generation of the TPS parameters for two sets of points. This
         function can be called by specifing the 'src' and 'dst parameters,
         or using positionnal arguments ( the first one is the 'src', and
         the second one the 'dst' parameters
     
         Required:
-            @param 'src': Source coordinates ( x, y )
-            @type  'src': python list of tuples or list of lists or numpy array
-            
-            @param 'dst': Destination coordinates ( x, y )
-            @type  'dst': python list of tuples or list of lists or numpy array
+        
+        :param src: Source coordinates ( x, y )
+        :type src: python list of tuples or list of lists or numpy array
+        
+        :param dst: Destination coordinates ( x, y )
+        :type dst: python list of tuples or list of lists or numpy array
 
-        Return:    
-            @return     : TPS parameters
-            @type       : python dictionnary
+        :return: TPS parameters
+        :rtype: python dictionnary
     
-    """    
+    """
     try:
         src, dst = args
     except:
@@ -112,29 +109,29 @@ def TPS_generate( *args, **kwags ):
 
 def TPS_project( *args, **kwargs ):
     """  
-        Point projection
+        Projection of the ( x, y ) point with the TPS function 'g' given in
+        parameters. If a angle 'theta' is given, the projected angle is
+        given in return.
         
-            Projection of the ( x, y ) point with the TPS function 'g' given in
-            parameters. If a angle 'theta' is given, the projected angle is
-            given in return.
-            
-            Required:
-                @param 'g'     : TPS parameters
-                @type  'g'     : python dictionary
-                             
-                @param 'x'     : x coordinate
-                @type  'x'     : float
-                
-                @param 'y'     : y coordinate
-                @type  'y'     : float
-                      
-            Optional:
-                @param 'theta' : minutia angle
-                @type  'theta' : float
-            
-            Return:
-                @return        : Projected point ( x, y ) of ( x, y, theta )
-                @return        : python tuple
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+                     
+        :param x: x coordinate
+        :type x: float
+        
+        :param y: y coordinate
+        :type y: float
+                  
+        Optional:
+        
+        :param theta: minutia angle
+        :type theta: float
+        
+        Return:
+        :return: Projected point ( x, y ) of ( x, y, theta )
+        :rtype: python tuple
     """
     
     try:
@@ -160,21 +157,21 @@ def TPS_project( *args, **kwargs ):
 
 def TPS_project_list( *args, **kwargs ):
     """
-        List of point projection
-     
-            Projection of a list of ( x, y ) points with the TPS function 'g'
-            passed in parameters.
+        Projection of a list of ( x, y ) points with the TPS function 'g'
+        passed in parameters.
      
         Required:
-            @param 'g'   : TPS parameters
-            @type  'g'   : python dictionary
-            
-            @param 'lst' : List of points to distort
-            @type  'lst' : python list
+    
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        :param lst: List of points to distort
+        :type lst: python list
             
         Return:
-            @return      : List of distorted points
-            @return      : python list
+        
+        :return: List of distorted points
+        :rtype: python list
     """
     try:
         g, lst = args
@@ -192,18 +189,18 @@ def TPS_project_list( *args, **kwargs ):
 
 def TPS_loadFromFile( f ):
     """
-        TPS parameter file loading
-            
-            Load TPS parameters from a file. The parameters have to be stored
-            as a python dictionnary.
-            
-            Required:
-                @param 'f' : URI of the file to load
-                @type  'f' : string
-                           
-            Return: 
-                @return    : TPS parameters
-                @return    : pyton dictionary
+        Load TPS parameters from a file. The parameters have to be stored
+        as a python dictionnary.
+        
+        Required:
+    
+        :param f: URI of the file to load
+        :type f: string
+                       
+        Return:
+    
+        :return: TPS parameters
+        :rtype: pyton dictionary
     """
     with open( f, "r" ) as fp:
         data = fp.read()
@@ -215,18 +212,18 @@ def TPS_loadFromFile( f ):
 
 def TPS_fromListToNumpy( *args, **kwargs ):
     """
-        TPS casting
-            
-            Change type of the variable of a TPS parameter object from python
-            list to numpy array.
-            
-            Required:
-                @param 'g' : TPS parameters
-                @type  'g' : python dictionary
-                           
-            Return: 
-                @return    : TPS parameters
-                @return    : pyton dictionary
+        Change type of the variable of a TPS parameter object from python
+        list to numpy array.
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        Return:
+        
+        :return: TPS parameters
+        :rtype: pyton dictionary
     """
     try:
         g = args[0]
@@ -240,28 +237,27 @@ def TPS_fromListToNumpy( *args, **kwargs ):
 
 def TPS_recenter( *args, **kwargs ):
     """"
-        TPS recentering
-            
-            Change the coordinate of the reference point in a TPS parameter
-            dictionary. This function affect only the linear part, without any
-            rotation of the TPS parameters.
-            
-            Required:
-                @param 'g'  : TPS parameters
-                @type  'g'  : python dictionary
-                           
-            Optional:
-                @param 'cx' : x coordinate 
-                @type  'cx' : float
-                @def   'cx' : 0
-            
-                @param 'cy' : y coordinate 
-                @type  'cy' : float
-                @def   'cy' : 0
-            
-            Return: 
-                @return     : TPS parameters
-                @return     : python dictionary
+        Change the coordinate of the reference point in a TPS parameter
+        dictionary. This function affect only the linear part, without any
+        rotation of the TPS parameters.
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+                       
+        Optional:
+        
+        :param cx: x coordinate 
+        :type cx: float
+        
+        :param cy: y coordinate 
+        :type cy: float
+        
+        Return: 
+        
+        :return: TPS parameters
+        :rtype: python dictionary
     """
     try:
         g, cx, cy = args
@@ -277,28 +273,26 @@ def TPS_recenter( *args, **kwargs ):
 
 def TPS_shift( *args, **kwargs ):
     """
-        TPS recentering
-            
-            Change the coordinate of the reference point in a TPS parameter
-            dictionary. This function affect only the linear part, without any
-            rotation of the TPS parameters.
-            
-            Required:
-                @param 'g'  : TPS parameters
-                @type  'g'  : python dictionary
-                           
-            Optional:
-                @param 'dx' : dx shift 
-                @type  'dx' : float
-                @def   'dx' : 0
-            
-                @param 'dy' : dy shift 
-                @type  'dy' : float
-                @def   'dy' : 0
-            
-            Return: 
-                @return     : TPS parameters
-                @return     : python dictionary
+        Change the coordinate of the reference point in a TPS parameter
+        dictionary. This function affect only the linear part, without any
+        rotation of the TPS parameters.
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        Optional:
+        :param dx: dx shift 
+        :type dx: float
+        
+        :param dy: dy shift 
+        :type dy: float
+        
+        Return: 
+        
+        :return: TPS parameters
+        :rtype: python dictionary
     """
     try:
         g, cx, cy = args
@@ -313,25 +307,25 @@ def TPS_shift( *args, **kwargs ):
 
 def TPS_rotate( **kwargs ):
     """
-        TPS rotation
-            
-            Change the rotation parameter in a TPS parameter dictionary. This
-            function affect only the linear part. The angle imply the rotation
-            of the output of the projection function 'g'.
-            
-            The angle of rotation is given in degree, anti-clockwise, with the
-            zero on the right (like ANSI/NIST 2007).
-            
-            Required:
-                @param 'g'     : TPS parameters
-                @type  'g'     : python dictionary
-                           
-                @param 'theta' : angle of rotation
-                @type  'theta' : float
-            
-            Return:           
-                @return        : TPS parameters
-                @return        : python dictionary
+        Change the rotation parameter in a TPS parameter dictionary. This
+        function affect only the linear part. The angle imply the rotation
+        of the output of the projection function 'g'.
+        
+        The angle of rotation is given in degree, anti-clockwise, with the
+        zero on the right (like ANSI/NIST 2007).
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        :param theta: angle of rotation
+        :type theta: float
+        
+        Return:    
+               
+        :return: TPS parameters
+        :rtype: python dictionary
     """
     g = kwargs.get( "g" )
     theta = kwargs.get( "theta", 0 )
@@ -350,67 +344,63 @@ def TPS_rotate( **kwargs ):
 
 def TPS_Image( **kwargs ):
     """
-        TPS distorsion on a image
-            
-            Application of the 'g' function on an image. This function applies
-            the reverting-methodology: an estimation of the reverse function
-            (backward projection) is estimated using a grid, which is projected
-            by the 'g' function. This projected grid is then used as source,
-            and the coordinates on the original image as destination. The
-            TPSCy.image can not be called with a forward 'g' TPS function!
-            
-            Required:
-                @param 'infile' : URI to the input file
-                @type  'infile' : python string
-                @rem   'infile' : Exclusive with and prioritary over 'inimg'
-                                
-                @param 'inimg' : numpy array with the input image
-                @type  'inimg' : numpy.array
-                @rem   'inimg' : Exclusive with 'infile'
-                               
-                @param 'gfile' : URI to the TPS parameters file
-                @type  'gfile' : python string
-                @rem   'gfile' : Exclusive with and prioritary over 'g'
-                
-                @param 'g' : TPS parameters
-                @type  'g' : python dictionary
-                @rem   'g' : Exclusive with 'gfile'
-                           
-            Optional:
-                @param 'res' : Resolution of the input and output image
-                @type  'res' : float
-                @def   'res' : 500
-                           
-                @param 'outfile' : URI to the output image file
-                @type  'outfile' : string
-                
-                @param 'reverseFullGrid' : Use the full-grid to revert the 'g' function (SLOW !)
-                @type  'reverseFullGrid' : boolean
-                @def   'reverseFullGrid' : False
-                
-                @param 'useWeights' : Use the weights to selects the optimal grid to revert the 'g' function
-                @type  'useWeights' : boolean
-                @def   'useweights' : True
-                           
-                @param 'gridSize' : Size of the grid to caculate the revert function
-                @type  'gridSize' : float
-                @def   'gridSize' : 0.75
-                           
-                @param 'cx' : x coordinate of the center
-                @type  'cx' : float
-                @def   'cx' : 0
-                           
-                @param 'cy' : y coordinate of the center
-                @type  'cy' : float
-                @def   'cy' : 0
-                           
-                @param 'ncores' : Number of cores used to do the projection of the input image.
-                @type  'ncores' : int
-                @def   'ncores' : 8
-                           
-            Return: 
-                @return    : Distorted image or successuly-written image
-                @return    : numpy.array or bool
+        Application of the 'g' function on an image. This function applies
+        the reverting-methodology: an estimation of the reverse function
+        (backward projection) is estimated using a grid, which is projected
+        by the 'g' function. This projected grid is then used as source,
+        and the coordinates on the original image as destination. The
+        TPSCy.image can not be called with a forward 'g' TPS function!
+        
+        Required:
+        
+        :param infile: URI to the input file
+        :type infile: python string
+        
+        :param inimg: numpy array with the input image
+        :type inimg: numpy.array
+        
+        .. note::
+            `infile` and `inimg` are mutially exclusive. `inimg` has prioritary
+        
+        :param gfile: URI to the TPS parameters file
+        :type gfile: python string
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        .. note::
+            `gile` and `g` are mutially exclusive. `gfile` has prioritary
+        
+        Optional:
+        
+        :param res: Resolution of the input and output image
+        :type res: float
+        
+        :param outfile: URI to the output image file
+        :type outfile: string
+        
+        :param reverseFullGrid: Use the full-grid to revert the 'g' function (SLOW !)
+        :type reverseFullGrid: boolean
+        
+        :param useWeights: Use the weights to selects the optimal grid to revert the 'g' function
+        :type useWeights: boolean
+        
+        :param gridSize: Size of the grid to caculate the revert function
+        :type gridSize: float
+        
+        :param cx: x coordinate of the center
+        :type cx: float
+        
+        :param cy: y coordinate of the center
+        :type cy: float
+        
+        :param ncores: Number of cores used to do the projection of the input image.
+        :type ncores: int
+        
+        Return:
+        
+        :return: Distorted image or successuly-written image
+        :rtype: numpy.array or bool
     """
     if CythonModule == False:
         raise NotImplementedError
@@ -538,45 +528,42 @@ def TPS_Grid( **kwargs ):
     """
         Distorsion grid
             
-            Creation of a distorsion grid. This gris is created using the
-            forward 'g' TPS parameters.
+        Creation of a distorsion grid. This gris is created using the
+        forward 'g' TPS parameters.
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        Optional:
+        
+        :param minx: minimum x coordinate
+        :type minx: float
             
-            Required:
-                @param 'g' : TPS parameters
-                @type  'g' : python dictionary
-    
-            Optional:
-                @param 'minx' : minimum x coordinate
-                @type  'minx' : float
-                @def   'minx' : 0
-    
-                @param 'maxx' : maximum x coordinate
-                @type  'maxx' : float
-                @def   'maxx' : 25.4
-    
-                @param 'miny' : minimum y coordinate
-                @type  'miny' : float
-                @def   'miny' : 0
-    
-                @param 'maxy' : maximum y coordinate
-                @type  'maxy' : float
-                @def   'maxy' : 25.4
-    
-                @param 'outfile' : URI to the output image. If None, the function will return the numpy.array of the image
-                @type  'outfile' : string
-                @def   'outfile' : None
-    
-                @param 'res' : Resolution of the output image
-                @type  'res' : float
-                @def   'res' : 500 [dpi]
-    
-                @param 'dm' : Border of the image added around the grid
-                @type  'dm' : float
-                @def   'dm' : 5 [px]
-            
-            Return: 
-                @return    : Image or sucessfully writed image
-                @return    : numpy.array or boolean
+        :param maxx: maximum x coordinate
+        :type maxx: float
+
+        :param miny: minimum y coordinate
+        :type miny: float
+
+        :param maxy: maximum y coordinate
+        :type maxy: float
+
+        :param outfile: URI to the output image. If None, the function will return the numpy.array of the image
+        :type outfile: string
+
+        :param res: Resolution of the output image
+        :type res: float
+
+        :param dm: Border of the image added around the grid
+        :type dm: float
+        
+        Return:
+        
+        :return: Image or sucessfully writed image
+        :rtype: numpy.array or boolean
+
     """
     g = kwargs.get( "g" )
     
@@ -617,37 +604,34 @@ def TPS_Grid( **kwargs ):
 
 def TPS_range( **kwargs ):
     """
-        Range calculation
-            
-            Calculation of the range in x and y on the projected space. This
-            function have to be called to be able to ensure that all borders of
-            the projected image will be in the output image. The border could
-            be bigger than the input image.
-            
-            Required:
-                @param 'g' : TPS parameters
-                @type  'g' : python dictionary
-                           
-            Optional:
-                @param 'minx' : minimum x coordinate
-                @type  'minx' : float
-                @def   'minx' : 0
-    
-                @param 'maxx' : maximum x coordinate
-                @type  'maxx' : float
-                @def   'maxx' : 25.4
-    
-                @param 'miny' : minimum y coordinate
-                @type  'miny' : float
-                @def   'miny' : 0
-    
-                @param 'maxy' : maximum y coordinate
-                @type  'maxy' : float
-                @def   'maxy' : 25.4
-            
-            Return: 
-                @return    : Dictionnary with minx, maxx, miny and maxy
-                @return    : python dict
+        Calculation of the range in x and y on the projected space. This
+        function have to be called to be able to ensure that all borders of
+        the projected image will be in the output image. The border could
+        be bigger than the input image.
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+                       
+        Optional:
+        
+        :param minx: minimum x coordinate
+        :type minx: float
+
+        :param maxx: maximum x coordinate
+        :type maxx: float
+
+        :param miny: minimum y coordinate
+        :type miny: float
+
+        :param maxy: maximum y coordinate
+        :type maxy: float
+        
+        Return:
+        
+        :return: Dictionnary with minx, maxx, miny and maxy
+        :return: python dict
     """
     g = kwargs.get( "g" )
     
@@ -665,39 +649,34 @@ def TPS_range( **kwargs ):
 
 def TPS_revertGrid( **kwargs ):
     """
-        TPS parameters reverting with a projected grid
-            
-            This function will calculate an approximation of the reverse 'g'
-            projection function with a grid of size 'gridSize'.
-            
-            Required:
-                @param 'g' : TPS parameters
-                @type  'g' : python dictionary
-                           
-            Optional:
-                @param 'minx' : minimum x coordinate
-                @type  'minx' : float
-                @def   'minx' : 0
+        This function will calculate an approximation of the reverse 'g'
+        projection function with a grid of size 'gridSize'.
+        
+        Required:
+        :param g: TPS parameters
+        :type g: python dictionary
+        
+        Optional:
+        
+        :param minx: minimum x coordinate
+        :type minx: float
+
+        :param maxx: maximum x coordinate
+        :type maxx: float
+
+        :param miny: minimum y coordinate
+        :type miny: float
+
+        :param maxy: maximum y coordinate
+        :type maxy: float
     
-                @param 'maxx' : maximum x coordinate
-                @type  'maxx' : float
-                @def   'maxx' : 25.4
-    
-                @param 'miny' : minimum y coordinate
-                @type  'miny' : float
-                @def   'miny' : 0
-    
-                @param 'maxy' : maximum y coordinate
-                @type  'maxy' : float
-                @def   'maxy' : 25.4
-            
-                @param 'gridSize' : Size of the grid
-                @type  'gridSize' : float
-                @def   'gridSize' : 0.75
-            
-            Return: 
-                @return    : reverted TPS parameters 
-                @return    : python dictionary
+        :param gridSize: Size of the grid
+        :type gridSize: float
+        
+        Return: 
+        
+        :return: reverted TPS parameters 
+        :rtype: python dictionary
     """
     if CythonModule == False:
         raise NotImplementedError
@@ -716,51 +695,44 @@ def TPS_revertGrid( **kwargs ):
 
 def TPS_revertDownSampling( **kwargs ):
     """
-        TPS parameters reverting with a projected grid
-            
-            This function will calculate an approximation of the reverse 'g'
-            projection function with a grid of size 'gridSize'.
-            
-            Required:
-                @param 'g' : TPS parameters
-                @type  'g' : python dictionary
-                           
-            Optional:
-                @param 'minx' : minimum x coordinate
-                @type  'minx' : float
-                @def   'minx' : 0
+        This function will calculate an approximation of the reverse 'g'
+        projection function with a grid of size 'gridSize'.
+        
+        Required:
+        
+        :param g: TPS parameters
+        :type g: python dictionary
+                       
+        Optional:
+        
+        :param minx: minimum x coordinate
+        :type minx: float
+
+        :param maxx: maximum x coordinate
+        :type maxx: float
+
+        :param miny: minimum y coordinate
+        :type miny: float
+
+        :param maxy: maximum y coordinate
+        :type maxy: float
     
-                @param 'maxx' : maximum x coordinate
-                @type  'maxx' : float
-                @def   'maxx' : 25.4
+        :param gridSize: Size of the grid
+        :type gridSize: float
     
-                @param 'miny' : minimum y coordinate
-                @type  'miny' : float
-                @def   'miny' : 0
+        :param useWeights: Use the weights of the TPS parameters to select only the important points
+        :type useWeights: boolean
     
-                @param 'maxy' : maximum y coordinate
-                @type  'maxy' : float
-                @def   'maxy' : 25.4
-            
-                @param 'gridSize' : Size of the grid
-                @type  'gridSize' : float
-                @def   'gridSize' : 0.75
-            
-                @param 'useWeights' : Use the weights of the TPS parameters to select only the important points
-                @type  'useWeights' : boolean
-                @def   'useWeights' : True
-            
-                @param 'weightslimit' : Minimum weight to select an important point
-                @type  'weightslimit' : float
-                @def   'weightslimit' : 0.003
-            
-                @param 'nbrandom' : Number of random points added on the grid
-                @type  'nbrandom' : int
-                @def   'nbrandom' : 10
-            
-            Return: 
-                @return    : reverted TPS parameters 
-                @return    : python dictionary
+        :param weightslimit: Minimum weight to select an important point
+        :type weightslimit: float
+    
+        :param nbrandom: Number of random points added on the grid
+        :type nbrandom: int
+        
+        Return: 
+        
+        :return: reverted TPS parameters 
+        :rtype: python dictionary
     """
     g = kwargs.get( "g" )
     
