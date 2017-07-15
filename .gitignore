@@ -5,6 +5,7 @@ void*.py
 TPS/TPSCy/build/
 TPS/TPSCy/TPSCy.c
 test/
-doc/
+doc/_build/
 tmp/
 TPS/version.py
+doc/version.py
