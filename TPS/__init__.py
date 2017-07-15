@@ -69,6 +69,14 @@ except:
 #    
 ################################################################################
 
+def TPS_module():
+    global CythonModule
+    
+    if CythonModule:
+        return "Cython"
+    else:
+        return "Python"
+
 ################################################################################
 #    
 #    Wrapping function
