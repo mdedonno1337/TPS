@@ -293,11 +293,6 @@ def r( *args, **kwargs ):
         miny = kwargs.get( "miny", CONF_miny )
         maxy = kwargs.get( "maxy", CONF_maxy )
     
-    minx = int( minx )
-    maxx = int( maxx )
-    miny = int( miny )
-    maxy = int( maxy )
-    
     nbstep = 200
     stepx = ( maxx - minx ) / nbstep
     stepy = ( maxy - miny ) / nbstep
