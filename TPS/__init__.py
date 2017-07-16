@@ -97,7 +97,59 @@ def TPS_generate( *args, **kwags ):
 
         :return: TPS parameters
         :rtype: python dictionnary
-    
+        
+        Usage:
+            
+            >>> from TPS import TPS_generate
+            >>> src = [ [ 3.6929, 10.3819 ], [ 6.5827, 8.8386 ], [ 6.7756, 12.0866 ], [ 4.8189, 11.2047 ], [ 5.6969, 10.0748 ] ]
+            >>> dst = [ [ 3.9724,  6.5354 ], [ 6.6969, 4.1181 ], [ 6.5394,  7.2362 ], [ 5.4016,  6.4528 ], [ 5.7756,  5.1142 ] ]
+
+            >>> g = TPS_generate( src, dst )
+            >>> g # doctest: +NORMALIZE_WHITESPACE
+            {'src': array([[  3.6929,  10.3819],
+               [  6.5827,   8.8386],
+               [  6.7756,  12.0866],
+               [  4.8189,  11.2047],
+               [  5.6969,  10.0748]]), 'scale': 0.8931102258056604, 'linear': array([[ 1.35499582, -2.94596308],
+               [ 0.87472587, -0.29556056],
+               [-0.02886041,  0.92163259]]), 'be': 0.0429994895805986, 'dst': array([[ 3.9724,  6.5354],
+               [ 6.6969,  4.1181],
+               [ 6.5394,  7.2362],
+               [ 5.4016,  6.4528],
+               [ 5.7756,  5.1142]]), 'weights': array([[-0.03803014,  0.04244693],
+               [ 0.02318775,  0.01591661],
+               [-0.02475506,  0.02881348],
+               [ 0.07978226, -0.04542552],
+               [-0.04018482, -0.0417515 ]]), 'shearing': 250.32963702546}
+        
+        The independents variables can be accessed by the name:
+        
+            >>> g[ 'weights' ] # doctest: +NORMALIZE_WHITESPACE
+            array([[-0.03803014,  0.04244693],
+               [ 0.02318775,  0.01591661],
+               [-0.02475506,  0.02881348],
+               [ 0.07978226, -0.04542552],
+               [-0.04018482, -0.0417515 ]])
+            
+            >>> g[ 'linear' ] # doctest: +NORMALIZE_WHITESPACE
+            array([[ 1.35499582, -2.94596308],
+               [ 0.87472587, -0.29556056],
+               [-0.02886041,  0.92163259]])
+            
+            >>> g[ 'be' ]
+            0.0429994895805986
+        
+        Two variables are defined in this library and not in the Bookstein article.
+        The 'scale' factor represent the scaling factor of the linear part. 
+        
+            >>> g[ 'scale' ]
+            0.8931102258056604
+        
+        The 'shearing' factor is the angle of the linear distortion.
+        
+            >>> g[ 'shearing' ]
+            250.32963702546
+            
     """
     try:
         src, dst = args
@@ -135,6 +187,23 @@ def TPS_project( *args, **kwargs ):
         Return:
         :return: Projected point ( x, y ) of ( x, y, theta )
         :rtype: python tuple
+        
+        Usage:
+        
+            >>> from TPS import TPS_project
+            >>> TPS_project( g = g, x = 3.6929, y = 10.3819 )
+            (3.9724000000000004, 6.535400000000002)
+            
+            >>> TPS_project( g, 3.6929, 10.3819 )
+            (3.9724000000000004, 6.535400000000002)
+
+        The angle at coordinate `(x,y)` can be also provided:
+        
+            >>> TPS_project( g = g, x = 3.6929, y = 10.3819, theta = 120 )
+            (3.9724000000000004, 6.535400000000002, 107.4300206381953)
+            
+            >>> TPS_project( g, 3.6929, 10.3819, 120 )
+            (3.9724000000000004, 6.535400000000002, 107.4300206381953)
     """
     
     try:
@@ -175,6 +244,22 @@ def TPS_project_list( *args, **kwargs ):
         
         :return: List of distorted points
         :rtype: python list
+        
+        Usage:
+        
+            >>> from TPS import TPS_project_list
+            >>> p = TPS_project_list( g = g, lst = src )
+            >>> p
+            [(3.9724000000000004, 6.535400000000002), (6.6969, 4.1181), (6.5394, 7.2362), (5.4016, 6.452800000000001), (5.775600000000002, 5.114200000000001)]
+        
+        Because of the way the numbers are stored in a computer, the projected
+        source points are not exactly the same as the destination points, as
+        they should. The numpy `allclose` function allow to check with a small
+        error accepted:
+        
+            >>> import numpy as np
+            >>> np.allclose( dst, p )
+            True
     """
     try:
         g, lst = args
@@ -261,6 +346,27 @@ def TPS_recenter( *args, **kwargs ):
         
         :return: TPS parameters
         :rtype: python dictionary
+        
+        Usage:
+        
+            >>> from TPS import TPS_recenter
+            >>> TPS_recenter( g, -5, -9 ) # doctest: +NORMALIZE_WHITESPACE
+            {'src': array([[-1.3071,  1.3819],
+               [ 1.5827, -0.1614],
+               [ 1.7756,  3.0866],
+               [-0.1811,  2.2047],
+               [ 0.6969,  1.0748]]), 'scale': 0.8931102258056604, 'linear': array([[ 1.35499582, -2.94596308],
+               [ 0.87472587, -0.29556056],
+               [-0.02886041,  0.92163259]]), 'be': 0.0429994895805986, 'dst': array([[-1.0276, -2.4646],
+               [ 1.6969, -4.8819],
+               [ 1.5394, -1.7638],
+               [ 0.4016, -2.5472],
+               [ 0.7756, -3.8858]]), 'weights': array([[-0.03803014,  0.04244693],
+               [ 0.02318775,  0.01591661],
+               [-0.02475506,  0.02881348],
+               [ 0.07978226, -0.04542552],
+               [-0.04018482, -0.0417515 ]]), 'shearing': 250.32963702546}
+            
     """
     try:
         g, cx, cy = args
@@ -298,6 +404,13 @@ def TPS_shift( *args, **kwargs ):
         
         :return: TPS parameters
         :rtype: python dictionary
+        
+        Usage:
+        
+            >>> from TPS import TPS_shift, TPS_project
+            >>> g2 = TPS_shift( g, 10, 10 )
+            >>> TPS_project( g2, 3.6929, 10.3819 )
+            (13.9724, 16.535400000000003)
     """
     try:
         g, cx, cy = args
@@ -572,7 +685,20 @@ def TPS_grid( **kwargs ):
         
         :return: Image or sucessfully writed image
         :rtype: numpy.array or boolean
-
+        
+        Usage:
+        
+            >>> from TPS import TPS_grid
+            >>> grid = TPS_grid( g = g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5, res = 2500, major_step = 0.1, minor_step = 0.01 )
+            >>> grid # doctest: +ELLIPSIS
+            <PIL.Image.Image image mode=RGB size=455x525 at ...>
+            
+        To check that the content of the image is the correct one, the MD5 hash
+        of the string representation of the image can be check as follow:
+        
+            >>> from hashlib import md5
+            >>> print md5( grid.tobytes() ).hexdigest()
+            2dd43ca2594a3c4f89c991e56cf1949e
     """
     g = kwargs.get( "g" )
     
@@ -678,6 +804,19 @@ def TPS_range( **kwargs ):
         
         :return: Dictionnary with minx, maxx, miny and maxy
         :return: python dict
+        
+        Usage:
+        
+            >>> from TPS import TPS_range
+            >>> TPS_range( g = g )
+            {'minx': 0.4248203385762995, 'miny': -8.18989068983607, 'maxx': 22.80355700551713, 'maxy': 21.933994861945017}
+        
+        By default, the range is calculated over a square of 25.4x25.4 mm. The
+        size can be change as follow:
+        
+            >>> TPS_range( g = g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5 )
+            {'minx': 3.182284625081442, 'miny': 3.2042699333294786, 'maxx': 7.971971092923031, 'maxy': 8.260636686117108}
+
     """
     g = kwargs.get( "g" )
     
@@ -723,6 +862,33 @@ def TPS_revertGrid( **kwargs ):
         
         :return: reverted TPS parameters 
         :rtype: python dictionary
+        
+        Usage:
+        
+            >>> from TPS import TPS_revertGrid
+            >>> TPS_revertGrid( g = g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5 ) # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+            {'src': array([[ 0.73196776, -1.04457354],
+                [ 0.70280997, -0.37590164],
+                [ 0.67290928,  0.29242804],
+                ...
+                [ 7.85309611,  5.39976625],
+                [ 7.74903413,  6.16864023],
+                [ 7.6712161 ,  6.95973553]]), 'scale': 1.1186499957839895, 'linear': array([[-1.17833397,  2.47171158],
+                [ 1.14384952,  0.37575455],
+                [ 0.02991905,  1.10383404]]), 'be': 0.08787071167463428, 'dst': array([[  0.  ,   0.  ],
+                [  0.  ,   0.75],
+                [  0.  ,   1.5 ],
+                ...
+                [  8.25,  10.5 ],
+                [  8.25,  11.25],
+                [  8.25,  12.  ]]), 'weights': array([[ -5.76470366e-04,   2.78386997e-04],
+                [ -8.68889465e-05,   8.01920970e-06],
+                [ -2.07563097e-04,   7.49686291e-05],
+                ...
+                [  1.41364134e-03,  -3.90979871e-03],
+                [ -1.69564492e-03,  -3.67606453e-04],
+                [ -1.79900827e-03,  -7.68862839e-04]]), 'shearing': 69.70267341107392}
+           
     """
     if TPSModule.lang() == "Python":
         raise NotImplementedError
@@ -779,6 +945,40 @@ def TPS_revertDownSampling( **kwargs ):
         
         :return: reverted TPS parameters 
         :rtype: python dictionary
+        
+        Usage:
+        
+            >>> from TPS import TPS_revertDownSampling
+            >>> import random
+            >>> random.seed( 1337 )
+            >>> TPS_revertDownSampling( g = g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5 ) # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+            {'src': array([[ 3.9724    ,  6.5354    ],
+                [ 6.6969    ,  4.1181    ],
+                [ 6.5394    ,  7.2362    ],
+                ...
+                [ 4.9218699 ,  4.25749054],
+                [ 6.31487586,  5.73546154],
+                [ 6.72093514,  3.63999746]]), 'scale': 1.1215773696061617, 'linear': array([[-1.25509043,  2.50578527],
+                [ 1.14208054,  0.37683407],
+                [ 0.03529867,  1.11308922]]), 'be': 0.09332928719306405, 'dst': array([[  3.6929    ,  10.3819    ],
+                [  6.5827    ,   8.8386    ],
+                [  6.7756    ,  12.0866    ],
+                ...
+                [  4.76471117,   8.30285123],
+                [  6.32212845,  10.78402949],
+                [  6.57102918,   8.19746182]]), 'weights': array([[  5.06859268e-02,  -2.42368744e-02],
+                [ -4.56663710e-02,  -4.84611532e-02],
+                [  8.55181153e-02,  -5.03931910e-02],
+                ...
+                [  1.41541206e-03,  -4.29811681e-03],
+                [  1.23069231e-02,  -1.74461562e-03],
+                [  9.58254505e-03,   5.90492134e-03]]), 'shearing': 69.52627878026158}
+        
+        .. note::
+            
+            Because of the addition of random points to generate the TPS
+            parameter, the PyUnit test need to fix the random.seed(). This is
+            not mendatory in a real case.
     """
     g = kwargs.get( "g" )
     
