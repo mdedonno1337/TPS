@@ -17,11 +17,9 @@ from .functions import deprecated
 
 try:
     from . import TPSCy as TPSModule
-    CythonModule = True
 
 except:
     from . import TPSpy as TPSModule
-    CythonModule = False
     
 ################################################################################
 #    
@@ -69,12 +67,7 @@ except:
 ################################################################################
 
 def TPS_module():
-    global CythonModule
-    
-    if CythonModule:
-        return "Cython"
-    else:
-        return "Python"
+    return TPSModule.lang()
 
 ################################################################################
 #    
@@ -410,9 +403,9 @@ def TPS_image( **kwargs ):
         :return: Distorted image or successuly-written image
         :rtype: numpy.array or bool
     """
-    if CythonModule == False:
+    if TPSModule.lang() == "Python":
         raise NotImplementedError
-    
+
     else:
         infile = kwargs.pop( "infile", None )
         inimg = kwargs.pop( "inimg", None )
@@ -723,7 +716,7 @@ def TPS_revertGrid( **kwargs ):
         :return: reverted TPS parameters 
         :rtype: python dictionary
     """
-    if CythonModule == False:
+    if TPSModule.lang() == "Python":
         raise NotImplementedError
     
     else:
