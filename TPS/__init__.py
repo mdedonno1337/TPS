@@ -13,6 +13,7 @@ from PIL import ImageDraw, ImageFont, Image
 from scipy import misc
 
 from .config import *
+from .functions import deprecated
 
 try:
     from . import TPSCy as TPSModule
@@ -349,7 +350,7 @@ def TPS_rotate( **kwargs ):
     
     return g
 
-def TPS_Image( **kwargs ):
+def TPS_image( **kwargs ):
     """
         Application of the 'g' function on an image. This function applies
         the reverting-methodology: an estimation of the reverse function
@@ -531,7 +532,7 @@ def TPS_Image( **kwargs ):
         else:
             return outimg
 
-def TPS_Grid( **kwargs ):
+def TPS_grid( **kwargs ):
     """
         Distorsion grid
             
@@ -865,3 +866,17 @@ def TPS_revertDownSampling( **kwargs ):
     ############################################################################
     
     return TPS_generate( src = srcbis, dst = dstbis )
+
+################################################################################
+# 
+#    Deprecated functions
+# 
+################################################################################
+
+@deprecated( "Use the TPS_grid() function instead" )
+def TPS_Grid( **kwargs ):
+    return TPS_grid( **kwargs )
+
+@deprecated( "Use the TPS_image() function instead" )
+def TPS_Image( **kwargs ):
+    return TPS_image( **kwargs )
