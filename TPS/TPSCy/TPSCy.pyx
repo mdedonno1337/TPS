@@ -63,6 +63,7 @@
 #cython: embedsignature   = True
 #cython: cdivision        = True
 
+from scipy import misc
 from scipy.linalg.basic     import solve, inv
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -1061,8 +1062,8 @@ def grid(
     outimg = outimg.T
     outimg = np.flipud( outimg )
     
-    return outimg
-
+    return misc.toimage( outimg, cmin = 0, cmax = 255 )
+    
 cdef double _norm(
         double [ : ] vector
     ):

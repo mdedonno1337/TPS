@@ -609,11 +609,7 @@ def TPS_grid( **kwargs ):
             "major_step": major_step
         }
         
-        if CythonModule:
-            outimg = TPSModule.grid( **params )
-            outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
-        else:
-            outimg = TPSModule.grid( **params )
+        outimg = TPSModule.grid( **params )
         
         if plotpoints:
             pointsize = int( kwargs.get( "pointsize", res / 250.0 ) )
