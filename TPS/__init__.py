@@ -4,15 +4,13 @@
 from __future__ import absolute_import
 
 import ast
+import numpy as np
 import os
-from pprint import pprint
 import random
 import sys
 
 from PIL import ImageDraw, ImageFont, Image
 from scipy import misc
-
-import numpy as np
 
 from .config import *
 
