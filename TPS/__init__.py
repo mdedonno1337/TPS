@@ -267,10 +267,12 @@ def TPS_recenter( *args, **kwargs ):
         cx = kwargs.get( "cx", 0 )
         cy = kwargs.get( "cy", 0 )
     
-    g[ 'src' ] += np.array( [ [ cx, cy ] ], dtype = np.double )
-    g[ 'dst' ] += np.array( [ [ cx, cy ] ], dtype = np.double )
+    g2 = deepcopy( g )
     
-    return g
+    g2[ 'src' ] += np.array( [ [ cx, cy ] ], dtype = np.double )
+    g2[ 'dst' ] += np.array( [ [ cx, cy ] ], dtype = np.double )
+    
+    return g2
 
 def TPS_shift( *args, **kwargs ):
     """
