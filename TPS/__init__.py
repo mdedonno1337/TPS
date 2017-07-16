@@ -25,14 +25,14 @@ except:
 ################################################################################
 #    
 #    The aim of this wrapper is to simplify the use of the Cython library,
-#    implementing a fast and efficient version of TPS distorsion proposed by
+#    implementing a fast and efficient version of TPS distortion proposed by
 #    Bookstein (1989).
 #    
 #    All the exposed functions are available in the TPSCy.__init__ file. The
 #    TPSCy module should not (but can) be called directly.
 #    
-#    All codes should be platform-independant. A recompilation of the TPSCy
-#    module is however needed.
+#    All codes should be platform-independent. A re-compilation of the TPSCy
+#    module is, however, needed.
 #    
 #    Some dependencies are needed:
 #    
@@ -44,23 +44,24 @@ except:
 #        cython
 #    
 #    Because this library is designed to work on fingerprints, all functions are
-#    designes to work with coordinates in milimeters, with the origin in the
+#    designed to work with coordinates in millimetres, with the origin on the
 #    lower left corner, as the ANSI/NIST 2007 standard. All functions, except
-#    "TPS_Image", are adimentional (can work with mm, inch, yard, pixels, light-
+#    "TPS_Image", are adimensional (can work with mm, inch, yard, pixels, light-
 #    year, parsec, or, if you want, the "Double-decker bus" unit).
 #    
-#                                               Marco De Donno
-#                                               University of Lausanne
-#
-#                                               Marco.DeDonno@unil.ch
-#                                               mdedonno1337@gmail.com
-#
+#                                                Marco De Donno
+#                                                University of Lausanne
+#                                                
+#                                                Marco.DeDonno@unil.ch
+#                                                mdedonno1337@gmail.com
 #    
-#    References:                                                                
+#    
+#    References:
+#
 #        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the   
 #        decomposition of deformations. IEEE Transactions on Pattern Analysis   
 #        and Machine Intelligence, Vol. 11 (6), pp. 567-585
-#
+#        
 #        NIST. (2007). American National Standard for Information Systems – Data
 #        Format for the Interchange of Fingerprint Facial, and Other Biometric
 #        Information – Part 1 (NIST Special Publication 500-271)

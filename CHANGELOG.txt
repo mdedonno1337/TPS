@@ -24,6 +24,14 @@ Commits since latest release:
 .. git_changelog::
     :rev-list: latest..
 
+v0.1.2 (2017-07-16)
+~~~~~~~~~~~~~~~~~~~
+
+Bugfix :
+
+* Error in rounding the x and y parameter in the python range() function
+
+
 v0.1.1 (2017-07-15)
 ~~~~~~~~~~~~~~~~~~~
 
