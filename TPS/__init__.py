@@ -596,12 +596,24 @@ def TPS_Grid( **kwargs ):
         draw.text( ( 50, 50 ), "No distorsion grid available:\nBending Energy to high.\nPlease check the pairing.", ( 0, 0, 0 ), font = font )
         
     else:
+        params = {
+            "g": g,
+            "minx": minx,
+            "maxx": maxx,
+            "miny": miny,
+            "maxy": maxy,
+            "res": res,
+            "dm": dm,
+            "minor_step": minor_step,
+            "major_step": major_step
+        }
+        
         if CythonModule:
-            outimg = TPSModule.grid( g, minx, maxx, miny, maxy, res = res, dm = dm, minor_step = minor_step, major_step = major_step )
+            outimg = TPSModule.grid( **params )
             outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
         else:
-            outimg = TPSModule.grid( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy, res = res, dm = dm, minor_step = minor_step, major_step = major_step )
     
+            outimg = TPSModule.grid( **params )
     ############################################################################
     #    Image writting on disk or return as numpy.array
     ############################################################################
