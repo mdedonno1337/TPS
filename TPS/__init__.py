@@ -581,6 +581,8 @@ def TPS_Grid( **kwargs ):
     miny = kwargs.get( "miny", CONF_miny )
     maxy = kwargs.get( "maxy", CONF_maxy )
     
+    plotpoints = kwargs.get( "plotpoints", True )
+    
     outfile = kwargs.get( "outfile", None )
     
     res = kwargs.get( "res", CONF_res )
@@ -612,8 +614,35 @@ def TPS_Grid( **kwargs ):
             outimg = TPSModule.grid( **params )
             outimg = misc.toimage( outimg, cmin = 0, cmax = 255 )
         else:
-    
             outimg = TPSModule.grid( **params )
+        
+        if plotpoints:
+            pointsize = int( kwargs.get( "pointsize", res / 250.0 ) )
+            pointcolour = kwargs.get( "pointcolour", "#FF0000" )
+            
+            r = TPS_range( **params )
+            
+            outimg = outimg.convert( "RGB" )
+            rec = Image.new( "RGB", ( pointsize, pointsize ), pointcolour )
+            
+            for x, y in TPS_project_list( g = g, lst = g[ 'src' ] ):
+                x -= r[ 'minx' ]
+                y -= r[ 'miny' ]
+                
+                x *= res / 25.4
+                y *= res / 25.4
+                
+                x = x + dm
+                y = outimg.size[ 1 ] - ( y + dm )
+                
+                x -= int( pointsize / 2 )
+                y -= int( pointsize / 2 )
+                
+                x = int( x )
+                y = int( y )
+                
+                outimg.paste( rec, ( x, y ) )
+        
     ############################################################################
     #    Image writting on disk or return as numpy.array
     ############################################################################
