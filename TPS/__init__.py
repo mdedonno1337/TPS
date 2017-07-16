@@ -9,6 +9,7 @@ import os
 import random
 import sys
 
+from copy import deepcopy
 from PIL import ImageDraw, ImageFont, Image
 from scipy import misc
 
@@ -304,9 +305,10 @@ def TPS_shift( *args, **kwargs ):
         cx = kwargs.get( "cx", 0 )
         cy = kwargs.get( "cy", 0 )
     
-    g[ 'linear' ] += np.array( [ [ cx, cy ], [ 0, 0 ], [ 0, 0 ] ], dtype = np.double )
+    g2 = deepcopy( g )
+    g2[ 'linear' ] += np.array( [ [ cx, cy ], [ 0, 0 ], [ 0, 0 ] ], dtype = np.double )
     
-    return g
+    return g2
 
 def TPS_rotate( **kwargs ):
     """
@@ -331,6 +333,8 @@ def TPS_rotate( **kwargs ):
         :rtype: python dictionary
     """
     g = kwargs.get( "g" )
+    g2 = deepcopy( g )
+    
     theta = kwargs.get( "theta", 0 )
     
     theta = -theta
@@ -339,11 +343,11 @@ def TPS_rotate( **kwargs ):
     c, s = np.cos( theta ), np.sin( theta )
     rotmat = np.array( [ [ c, -s ], [ s, c ] ], dtype = np.double )
     
-    rot = g[ 'linear' ][ 1:, : ]
+    rot = g2[ 'linear' ][ 1:, : ]
     rotbis = np.dot( rot, rotmat )
-    g[ 'linear' ] = np.vstack( ( g[ 'linear' ][ 0, : ], rotbis ) )
+    g2[ 'linear' ] = np.vstack( ( g2[ 'linear' ][ 0, : ], rotbis ) )
     
-    return g
+    return g2
 
 def TPS_image( **kwargs ):
     """
@@ -414,6 +418,7 @@ def TPS_image( **kwargs ):
         
         gfile = kwargs.pop( "gfile", None )
         g = kwargs.pop( "g", None )
+        g2 = deepcopy( g )
         
         reverseFullGrid = kwargs.pop( "reverseFullGrid", False )
         
@@ -450,14 +455,14 @@ def TPS_image( **kwargs ):
         ############################################################################
         
         if gfile != None:
-            g = TPS_loadFromFile( gfile )
-        elif g != None:
+            g2 = TPS_loadFromFile( gfile )
+        elif g2 != None:
             pass
         else:
             raise Exception( "No TPS parameters of file" )
         
         if cx != 0 and cy != 0:
-            g = TPS_recenter( g = g, cx = cx, cy = cy )
+            g2 = TPS_recenter( g = g2, cx = cx, cy = cy )
         
         maxx, maxy = indata.shape
         maxx = maxx / float( res ) * 25.4
@@ -471,7 +476,7 @@ def TPS_image( **kwargs ):
         r = kwargs.get( 'r', None )
         
         if r == None:
-            r = TPSModule.r( g, 0, int( maxx ), 0, int( maxy ) )
+            r = TPSModule.r( g2, 0, int( maxx ), 0, int( maxy ) )
         
         size = [
             int( float( res ) / 25.4 * ( r[ 'maxx' ] - r[ 'minx' ] ) ),
@@ -490,10 +495,10 @@ def TPS_image( **kwargs ):
         ############################################################################
         
         if reverseFullGrid:
-            g2 = TPSModule.revert( g, 0, maxx, 0, maxy, gridSize )
+            g2 = TPSModule.revert( g2, 0, maxx, 0, maxy, gridSize )
         else:
             g2 = TPS_revertDownSampling( 
-                g = g,
+                g = g2,
                 
                 minx = 0,
                 maxx = maxx,
