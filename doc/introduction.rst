@@ -63,36 +63,73 @@ As available in the article, the `Bending Energy` is:
 
 .. code::
 
-    >>> print "%.4f" % g[ 'be' ]
+    >>> pprint( g[ 'be' ] )
     0.0430
 
-The weights are:
+The weights in the `x` axis are:
 
 .. code::
 
-    >>> wx = [ "%.4f" % x for x in g[ 'weights' ][ :, 0 ] ]
-    >>> wy = [ "%.4f" % y for y in g[ 'weights' ][ :, 1 ] ]
-    
-    >>> print wx
+    >>> pprint( g[ 'weights' ][ :, 0 ] )
     ['-0.0380', '0.0232', '-0.0248', '0.0798', '-0.0402']
-    >>> print wy
+
+and on the `y` axis:
+
+.. code::
+
+    >>> pprint( g[ 'weights' ][ :, 1 ] )
     ['0.0424', '0.0159', '0.0288', '-0.0454', '-0.0418']
 
 The linear part is:
 
 .. code::
 
-    >>> lx = [ "%.4f" % x for x in g[ 'linear' ][ :, 0 ] ]
-    >>> ly = [ "%.4f" % y for y in g[ 'linear' ][ :, 1 ] ]
-    
-    >>> print lx
+    >>> pprint( g[ 'linear' ][ :, 0 ] )
     ['1.3550', '0.8747', '-0.0289']
-    >>> print ly
+    
+    >>> pprint( g[ 'linear' ][ :, 1 ] )
     ['-2.9460', '-0.2956', '0.9216']
 
 .. note::
 
-    A small difference is visible in the results in respect of the original article, probably due to higher precision in the modern math library used (Numpy).
+    A small difference is visible in the results in respect of the original article, probably due to higher precision in the modern math library used (Numpy and BLAS) or rounding effect in the source and destination vectors.
+
+It's possible to create the distortion grid based on the TPS parameters as follow:
+
+.. code::
+
+	>>> grid = TPS_Grid( 
+	    g = g,
+	    minx = 3.8,
+	    maxx = 8.6,
+	    miny = 8,
+	    maxy = 12.5,
+	    res = 2500,
+	    major_step = 0.1,
+	    minor_step = 0.01
+	 )
+
+The resulting grid can be see with the `grid.show()` command:
+
+.. image:: _static/grid.png
+
+This grid shows the orthogonal grid placed on the source data, and distorted with the TPS parameters to align the source points on the destination points. The destination points are shown on the distortion grid in red.
+
+Remark
+~~~~~~
+	
+The `pprint` function is defined as follow:
+
+.. code::
+	
+	def pprint( data ):
+	    def f( data ):
+	        return "%.4f" % data
+	    
+	    try:
+	        print f( data )
+	    except:
+	        print map( f, data ) 
 
 References
 ~~~~~~~~~~
