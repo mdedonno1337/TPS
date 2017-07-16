@@ -3,7 +3,6 @@
 
 import os
 import subprocess
-import unittest
 
 from MDmisc.egit import git_version
 from MDmisc.eprint import eprint
