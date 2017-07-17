@@ -9,6 +9,12 @@ src = [ [ 3.6929, 10.3819 ], [ 6.5827, 8.8386 ], [ 6.7756, 12.0866 ], [ 4.8189, 
 dst = [ [ 3.9724, 6.5354 ], [ 6.6969, 4.1181 ], [ 6.5394, 7.2362 ], [ 5.4016, 6.4528 ], [ 5.7756, 5.1142 ] ]
 
 class TestCore( unittest.TestCase ):
+    def __init__( self, *args, **kwargs ):
+        global src, dst
+        self.g = TPS_generate( src, dst )
+        
+        return super( TestCore, self ).__init__( *args, **kwargs )
+    
     def test_generate( self ):
         global src, dst
         
@@ -45,30 +51,27 @@ class TestCore( unittest.TestCase ):
         }
         
         for TPSModule in [ TPSCy, TPSpy ]:
-            g = TPSModule.generate( src, dst )
-            
-            for key in list( set( g.keys() ) | set( expected.keys() ) ):
-                self.assertTrue( key in g, "%s: '%s' key not present" % ( TPSModule.lang(), key ) )
-                self.assertTrue( np.allclose( g[ key ], expected[ key ] ), "\n\nError on: '%s' -> '%s'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), key, g[ key ], expected[ key ] ) )
+            for key in list( set( self.g.keys() ) | set( expected.keys() ) ):
+                self.assertTrue( key in self.g, "%s: '%s' key not present" % ( TPSModule.lang(), key ) )
+                self.assertTrue( np.allclose( self.g[ key ], expected[ key ] ), "\n\nError on: '%s' -> '%s'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), key, self.g[ key ], expected[ key ] ) )
     
     def test_project( self ):
-        global src, dst
-        
-        g = TPS_generate( src, dst )
+        expected = [ 3.9724, 6.5354 ]
         
         for TPSModule in [ TPSCy, TPSpy ]:
-            xp, yp, _ = TPSModule.project( g, 3.6929, 10.3819, 0 )
+            xp, yp, _ = TPSModule.project( self.g, 3.6929, 10.3819, 0 )
             p = [ xp, yp ]
-            expected = [ 3.9724, 6.5354 ]
             
             self.assertTrue( np.allclose( p, expected ), "\n\nError on: '%s' -> project\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), p, expected ) )
 
 class TestImages( unittest.TestCase ):
-    def test_r( self ):
+    def __init__( self, *args, **kwargs ):
         global src, dst
+        self.g = TPS_generate( src, dst )
         
-        g = TPS_generate( src, dst )
-        
+        return super( TestImages, self ).__init__( *args, **kwargs )
+    
+    def test_r( self ):
         expected = {
             'minx': 3.9529122211962227,
             'miny': 3.0935381368930255,
@@ -77,7 +80,7 @@ class TestImages( unittest.TestCase ):
         }
         
         for TPSModule in [ TPSCy, TPSpy ]:
-            r = TPSModule.r( g = g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5 )
+            r = TPSModule.r( g = self.g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5 )
             
             for key in expected.keys():
                 self.assertTrue( np.allclose( r[ key ], expected[ key ] ), "\n\nError on: '%s' -> '%s'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), key, r[ key ], expected[ key ] ) )
