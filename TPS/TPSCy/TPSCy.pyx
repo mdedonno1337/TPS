@@ -258,6 +258,7 @@ def generate(
     cdef double * linear    = < double * > malloc( 3 * 2 * sizeof( double ) )
     cdef double * be        = < double * > malloc( 1 *     sizeof( double ) )
     cdef double * scale     = < double * > malloc( 1 *     sizeof( double ) )
+    cdef bint     mirror
     cdef double * shearing  = < double * > malloc( 1 *     sizeof( double ) )
     
     # Call of the pure-C function
@@ -266,7 +267,13 @@ def generate(
         W, linear, be # output storage
     )
     
-    scale[ 0 ] = sqrt( ( linear[ 2 ] * linear[ 5 ] ) - ( linear[ 3 ] * linear[ 4 ] ) )
+    surfaceratio = ( linear[2] * linear[5] ) - ( linear[3] * linear[4] )
+    scale[ 0 ] = sqrt( abs( surfaceratio ) )
+    if surfaceratio < 0:
+        mirror = 1
+    else:
+        mirror = 0
+    
     shearing[ 0 ] = _angle_between( linear[ 2 ], linear[ 4 ], linear[ 3 ], linear[ 5 ], 1 )
     
     ############################################################################
@@ -280,6 +287,7 @@ def generate(
         'dst':      np.asarray( dst ),
         'linear':   np.array( < double [ :3, :2 ] > linear ),
         'scale':    scale[ 0 ],
+        'mirror':   mirror,
         'shearing': shearing[ 0 ],
         'weights':  np.array( < double [ :n, :2 ] > W ),
         'be':       be[ 0 ],
