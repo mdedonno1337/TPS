@@ -8,7 +8,7 @@ import unittest
 src = [ [ 3.6929, 10.3819 ], [ 6.5827, 8.8386 ], [ 6.7756, 12.0866 ], [ 4.8189, 11.2047 ], [ 5.6969, 10.0748 ] ]
 dst = [ [ 3.9724, 6.5354 ], [ 6.6969, 4.1181 ], [ 6.5394, 7.2362 ], [ 5.4016, 6.4528 ], [ 5.7756, 5.1142 ] ]
 
-class TestFonctionGet( unittest.TestCase ):
+class TestCore( unittest.TestCase ):
     def test_generate( self ):
         global src, dst
         
@@ -62,7 +62,8 @@ class TestFonctionGet( unittest.TestCase ):
             expected = [ 3.9724, 6.5354 ]
             
             self.assertTrue( np.allclose( p, expected ), "\n\nError on: '%s' -> project\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), p, expected ) )
-    
+
+class TestImages( unittest.TestCase ):
     def test_r( self ):
         global src, dst
         
