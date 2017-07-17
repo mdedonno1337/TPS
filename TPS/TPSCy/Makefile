@@ -29,6 +29,9 @@ c: cleanc
 $(EXT) gcc compile: clean$(EXT)
 	python setup.py build_ext --inplace $(OPTS)
 
+test:
+	python ../../TPSModules_unittest.py
+
 a annotate html: cleanhtml
 	cython -a $(MODNAME).pyx
 
