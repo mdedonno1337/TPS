@@ -687,11 +687,6 @@ def TPS_range( **kwargs ):
     miny = kwargs.get( "miny", CONF_miny )
     maxy = kwargs.get( "maxy", CONF_maxy )
     
-    minx = int( minx )
-    maxx = int( maxx )
-    miny = int( miny )
-    maxy = int( maxy )
-    
     return TPSModule.r( g, minx, maxx, miny, maxy )
 
 def TPS_revertGrid( **kwargs ):
