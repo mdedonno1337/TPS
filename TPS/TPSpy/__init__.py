@@ -281,7 +281,7 @@ def grid( *args, **kwargs ):
             yp = int( ( y - range[ 'miny' ] ) * float( res ) / 25.4 )
             
             try:
-                pixels[ xp + dm, sizey - ( yp + dm ) ] = 0
+                pixels[ xp + dm, sizey - ( yp + dm ) - 1 ] = 0
             except:
                 pass
             
@@ -293,7 +293,7 @@ def grid( *args, **kwargs ):
             yp = int( ( y - range[ 'miny' ] ) * float( res ) / 25.4 )
             
             try:
-                pixels[ xp + dm, sizey - ( yp + dm ) ] = 0
+                pixels[ xp + dm, sizey - ( yp + dm ) - 1 ] = 0
             except:
                 pass
     
