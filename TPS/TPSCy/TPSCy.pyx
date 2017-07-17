@@ -253,28 +253,28 @@ def generate(
     
     cdef int n = src.shape[ 0 ]
     
-    # Memory allocation C-pointer-style
+    # Variable definition
     cdef double * W         = < double * > malloc( n * 2 * sizeof( double ) )
     cdef double * linear    = < double * > malloc( 3 * 2 * sizeof( double ) )
-    cdef double * be        = < double * > malloc( 1 *     sizeof( double ) )
-    cdef double * scale     = < double * > malloc( 1 *     sizeof( double ) )
+    cdef double   be
+    cdef double   scale
     cdef bint     mirror
-    cdef double * shearing  = < double * > malloc( 1 *     sizeof( double ) )
+    cdef double   shearing
     
     # Call of the pure-C function
     _generate(
-        src, dst,     # input variables
-        W, linear, be # output storage
+        src, dst,       # input variables
+        W, linear, &be  # output storage
     )
     
     surfaceratio = ( linear[2] * linear[5] ) - ( linear[3] * linear[4] )
-    scale[ 0 ] = sqrt( abs( surfaceratio ) )
+    scale = sqrt( abs( surfaceratio ) )
     if surfaceratio < 0:
         mirror = 1
     else:
         mirror = 0
     
-    shearing[ 0 ] = _angle_between( linear[ 2 ], linear[ 4 ], linear[ 3 ], linear[ 5 ], 1 )
+    shearing = _angle_between( linear[ 2 ], linear[ 4 ], linear[ 3 ], linear[ 5 ], 1 )
     
     ############################################################################
     #    
@@ -286,11 +286,11 @@ def generate(
         'src':      np.asarray( src ).tolist(),
         'dst':      np.asarray( dst ).tolist(),
         'linear':   np.array( < double [ :3, :2 ] > linear ).tolist(),
-        'scale':    scale[ 0 ],
+        'scale':    scale,
         'mirror':   mirror,
-        'shearing': shearing[ 0 ],
+        'shearing': shearing,
         'weights':  np.array( < double [ :n, :2 ] > W ).tolist(),
-        'be':       be[ 0 ],
+        'be':       be,
     }
     
 cdef void _generate(
