@@ -20,25 +20,25 @@
 #                                               University of Lausanne
 #
 #
-#    References:                                                                
-#        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the   
-#        decomposition of deformations. IEEE Transactions on Pattern Analysis   
-#        and Machine Intelligence, Vol. 11 (6), pp. 567-585                     
-#                                                                               
-#
-#             ┌──────────────────────────────────────────────────┐                          
+#    References:
+#        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the
+#        decomposition of deformations. IEEE Transactions on Pattern Analysis
+#        and Machine Intelligence, Vol. 11 (6), pp. 567-585
+#    
+#    
+#             ┌──────────────────────────────────────────────────┐
 #             │ ┌───────────┐           CODER'S LICENCE          │
 #             │ │           │                                    │
-#             │ │  !\/\/\/! │   Name:____De_Donno_Marco_________ │        
-#             │ │  !  _  _! │   Address:_On_my_keyboard_________ │        
-#             │ │ (! (.)(.) │   Date of birth:__21.03.1989______ │        
-#             │ │  !   ___\ │   Sex: _Yes_please________________ │        
-#             │ │  !____/   │   Height:_197cm__ Weight:__85__ Kg.│        
-#             │ │  /    \   │   Coding restrictions:__None______ │        
-#             │ │ //~~~~\\  │   Licence Number: #MD1337PR0G_____ │        
+#             │ │  !\/\/\/! │   Name:____De_Donno_Marco_________ │
+#             │ │  !  _  _! │   Address:_On_my_keyboard_________ │
+#             │ │ (! (.)(.) │   Date of birth:__21.03.1989______ │
+#             │ │  !   ___\ │   Sex: _Yes_please________________ │
+#             │ │  !____/   │   Height:_197cm__ Weight:__85__ Kg.│
+#             │ │  /    \   │   Coding restrictions:__None______ │
+#             │ │ //~~~~\\  │   Licence Number: #MD1337PR0G_____ │
 #             │ └───────────┘                                    │
-#             └──────────────────────────────────────────────────┘                             
-#
+#             └──────────────────────────────────────────────────┘
+#    
 ################################################################################
 
 ################################################################################
@@ -80,9 +80,9 @@ from libc.math              cimport sin, cos, tan, acos, M_PI
 from libc.stdlib            cimport malloc, free
 
 ################################################################################
-#
+#    
 #    Memory allocation
-#
+#    
 #        All the memory allocations are made in row-major style (row-by-row
 #        storage in the malloc'ed variable). The access of a n x m matrix,
 #        with n elements by row, is made with the statement:
@@ -96,7 +96,6 @@ from libc.stdlib            cimport malloc, free
 #            var[ i , j ]
 #
 #        For readability, the row and column are indicated in parentheses.
-#
 #        The Cython code for memory allocation is C-style (n x m double matrix):
 #
 #            cdef double * var_container = < double * > malloc( n * m * sizeof( double ) )
@@ -169,17 +168,17 @@ cdef void _matrix_self_euclidean_dist(
     ############################################################################
     #    
     #    Matrix Euclidean distance
-    #
+    #    
     #        Calculation of Euclidean distances between all points in a matrix.
     #        The Euclidean distance between the point i and j is stored in the
     #        ret matrix in the ( i, j ) coordinates.
-    #
+    #        
     #        With different experimentations, the use of multiple cores to
     #        compute the _matrix_self_euclidean_dist matrix, the use of multiple
     #        cores on small matrices is useless, and more time consuming. If
     #        the matrix is greater than 150 x 150, then the use of 4 processors
     #        is the more efficient.
-    #
+    #    
     ############################################################################
     
     cdef int i, j
@@ -210,12 +209,12 @@ cdef void _U(
     ############################################################################
     #    
     #    U function
-    #
+    #    
     #        Implementation of the U function as defined by Bookstein.
-    #
+    #        
     #        Even if the U function could be applied on multiples processors,
     #        the time to calculate the TPS parameters is shorter on one core.
-    #
+    #    
     ############################################################################
     
     cdef int x
@@ -233,22 +232,22 @@ def generate(
     ):
     
     ############################################################################
-    #
+    #    
     #    TPS distortion parameter calculation
-    #
+    #    
     #        Wrapper for the pure-C function _generate
-    #
+    #        
     #        The memory allocation is also made here because of the construction
     #        of the _generate function (in-place variable allocation). The
     #        _generate function does not make any return, but allocate directly
     #        the memory space given in the pointers (W, linear and be).
-    #
+    #        
     #        The memory allocation is almost stable for any matrix size (between
     #        ~10^-5 and ~10^-4 seconds between n = 5 and n = 1000). The gain
     #        in time is important compared with the python implementation
     #        (almost 2 orders of magnitude with the memory allocation and the
     #        _generate call).
-    #
+    #    
     ############################################################################
     
     cdef int n = src.shape[ 0 ]
@@ -267,7 +266,7 @@ def generate(
         W, linear, &be  # output storage
     )
     
-    surfaceratio = ( linear[2] * linear[5] ) - ( linear[3] * linear[4] )
+    surfaceratio = ( linear[ 2 ] * linear[ 5 ] ) - ( linear[ 3 ] * linear[ 4 ] )
     scale = sqrt( abs( surfaceratio ) )
     if surfaceratio < 0:
         mirror = 1
@@ -305,16 +304,16 @@ cdef void _generate(
     ############################################################################
     #    
     #    TPS parameter - Fast calculation with a pure-C function
-    #
+    #    
     #        Direct implementation of the Bookstein (1989) article, with some
     #        mathematical simplifications / optimizations. The results are
     #        however exactly the same.
-    #
+    #        
     #        Fast pure-C function. The time gain is important compared to the
     #        pure Python implementation. The main gains are made by variable
     #        typing, manual memory management and manual mathematical
     #        calculation.
-    #
+    #        
     #        An interesting point is to be able to call this function directly
     #        from pure-C functions, to be able to optimize some heavy parts of
     #        calculations and optimization (reversing the TPS function for the
@@ -331,7 +330,7 @@ cdef void _generate(
     #                                                  (| (.)(.) |)
     ############################################### --OOOo--()--oOOO. -- #######
     
- 
+    
     # Generic variable definition
     cdef int n = src.shape[ 0 ]
     cdef int nrhs = 2
@@ -340,11 +339,11 @@ cdef void _generate(
     cdef int i, j, k, m
     
     ############################################################################
-    #
+    #    
     #    K matrix
-    #
+    #    
     #        Size : n x n
-    #
+    #    
     ############################################################################
     
     cdef double * K_container = < double * > malloc( ( n ** 2 ) * sizeof( double ) )
@@ -353,18 +352,18 @@ cdef void _generate(
     _U( K_container, n ** 2 ) 
     
     ############################################################################
-    #
+    #    
     #    L matrix
-    #
+    #    
     #        Size : ( n + 3 ) x ( n + 3 )
-    #
+    #        
     #        The filling of the L matrix is made iteratively, by variable. The
     #        first variable to be filled is the K variable, then the source 
     #        points. The null matrix is filled in the initialization phase.
-    #
+    #        
     #        This filling process is very fast; the use of multiple processors
     #        is useless.
-    #        
+    #    
     ############################################################################
     
     cdef double * L_container = < double * > malloc( ( ( n + 3 ) ** 2 ) * sizeof( double ) )
@@ -393,10 +392,10 @@ cdef void _generate(
         
         #               col           row
         #            ---------   -------------------------
-        L_container[ ( j )     + ( ( i     ) * ( n + 3 ) )] = 1
-        L_container[ ( j )     + ( ( i + 1 ) * ( n + 3 ) )] = src[ k, 0 ]
-        L_container[ ( j )     + ( ( i + 2 ) * ( n + 3 ) )] = src[ k, 1 ]
-        
+        L_container[ ( j )     + ( ( i     ) * ( n + 3 ) ) ] = 1
+        L_container[ ( j )     + ( ( i + 1 ) * ( n + 3 ) ) ] = src[ k, 0 ]
+        L_container[ ( j )     + ( ( i + 2 ) * ( n + 3 ) ) ] = src[ k, 1 ]
+    
     ############################################################################
     #
     #    Transposed V
@@ -404,7 +403,7 @@ cdef void _generate(
     ############################################################################
     
     cdef double * V_container = < double * > malloc( ( ( n + 3 ) * 2 ) * sizeof( double ) )
-        
+    
     for i from 0 <= i < ( ( n + 3 ) * 2 ):
         V_container[ i ] = 0
     
@@ -415,17 +414,17 @@ cdef void _generate(
         V_container[ ( i ) + ( n + 3 ) ] = dst[ i, 1 ]
     
     ############################################################################
-    #
+    #    
     #    Calculation of the distortion parameters
-    #
+    #    
     #        Equivalent in the original article of:
-    #
+    #        
     #            Wa = np.dot( inv( L ), V.T )
-    #
+    #        
     #        simplified as (because of math...):
-    #
+    #        
     #            Wa = scipy.linalg.solve( L, V.T )
-    #
+    #        
     #        and optimized by calling the Cython Lapack implementation directly
     #        
     #            cython_lapack.dgesv(
@@ -442,17 +441,17 @@ cdef void _generate(
     #        is called instead of the Scipy one because the Cython produced code
     #        is pure C, so directly callable without the Python wrapper present
     #        in the Scipy version.
-    #
+    #        
     #        The cython_lapack module is available in the Scipy distribution
     #        ONLY if the BLAS/LAPACK distribution is present. The compilation
     #        process need to be done by hand on the local machine. A copy of the
     #        cython_lapack.pyd library should be present, if needed, in this
     #        package distribution.
-    #
+    #        
     #        A test should be done to evaluate the performance, on really large
     #        matrices of a full-manual multi-core matrix solving (the LAPACK
     #        implementation seems to be on one core...).
-    #
+    #    
     ############################################################################
     
     # Pivoting array
@@ -486,8 +485,8 @@ cdef void _generate(
     cdef double * a_container = < double * > malloc( 3 * 2 * sizeof( double ) )
     
     for i from 0 <= i < n:
-        #             col           row
-        #            -----   -------------------------
+        #             col     row
+        #            -----   -----
         W_container[ ( i )         ] = V_container[ i ]
         W_container[ ( i ) + ( n ) ] = V_container[ i + n + 3 ]
     
@@ -498,9 +497,9 @@ cdef void _generate(
         a_container[ ( i ) + ( 3 ) ] = V_container[ n + i + n + 3 ]
     
     ############################################################################
-    #
+    #    
     #    Bending energy calculation
-    #
+    #    
     #        The bending energy is calculated in two steps. The fist one is the
     #        calculation of ( W.t . K ), stored in the "WK_container" malloc.
     #        The second step is the calculation of the ( W.t . K . W ) matrix,
@@ -522,19 +521,19 @@ cdef void _generate(
                 WK_container[ ( j ) + ( i * 2 ) ] += W_container[ ( k ) + ( j * n ) ] * K_container[ ( i ) + ( k * n ) ]
     
     ############################################################################
-    #
+    #    
     #    Optimizations
-    #
+    #    
     #        Since only 2 out of 4 elements in the WKW_container are relevant
     #        (especially the positions 0 (top left) and 3 (bottom right)), the 2
     #        other variables are not calculated. The original code would be this
     #        one:
-    #
+    #        
     #            cdef double * WKW_container = < double * > malloc( 2 * 2 * sizeof( double ) )
     #                
     #            for i from 0 <= i < 4:
     #                WKW_container[ i ] = 0
-    #           
+    #            
     #            for j from 0 <= j < 2:
     #                for i from 0 <= i < 2:
     #                    for k from 0 <= k < n:
@@ -543,22 +542,22 @@ cdef void _generate(
     #                            W_container [ ( k ) + ( i * n ) ]
     #            
     #            cdef double be = 0.5 * ( WKW_container[ 0 ] + WKW_container[ 3 ] ) 
-    #
+    #        
     #        Optimization is made by using only the coordinates
     #            
     #            ( i, j ) = ( 0, 0 )
-    #
+    #        
     #        and
-    #
+    #        
     #            ( i, j ) = ( 1, 1 )
-    #
+    #        
     #        The second optimization is made by the distributivity property. The
     #        dot product is distributed, and directly accumulated in the be
     #        variable. This allows not to store the "WKW_container" variable, and
     #        therefore, not iterate a second time over it.
-    #
+    #        
     #        Effective gain in time is negligible, but still cool to do.
-    #
+    #    
     ############################################################################
     
     cdef double be = 0
@@ -568,18 +567,18 @@ cdef void _generate(
         j = m
     
         for k from 0 <= k < n:
-            #                            col       row                      col       row   
+            #                            col       row                      col       row
             #                           -----   ---------                  -----   ---------
             be += 0.5 * ( WK_container[ ( j ) + ( k * 2 ) ] * W_container[ ( k ) + ( i * n ) ] )
     
     ############################################################################
-    #
+    #    
     #    Returns - memory allocation
-    #
+    #    
     #        The memory allocation is not made before because of the
     #        dissimilarity in structure. Since the matrices are relatively small
     #        (n x 2 and 3 x 2), the memory and time loss is very small.
-    #
+    #    
     ############################################################################
     
     for i from 0 <= i < n:
@@ -587,7 +586,7 @@ cdef void _generate(
             #         row       col                    col       row
             #      ---------   -----                  -----   ---------
             out_W[ ( 2 * i ) + ( j ) ] = W_container[ ( i ) + ( j * n ) ]
-        
+    
     for i from 0 <= i < 3:
         for j from 0 <= j < 2:
             #              row       col                    col       row
@@ -618,18 +617,18 @@ def revert(
     ):
     
     ############################################################################
-    #
+    #    
     #    Reverting function
-    #
+    #    
     #        Function to "revert" a TPS function:
-    #
+    #        
     #            1. Project a grid with the TPS function
     #            2. Use the projected points as src, and initial grid as dst
     #            3. Calculate the TPS function
-    #
+    #        
     #        Since the TPS projection function is not bijective, This ugly
     #        method is the only one capable of estimate the reverted TPS function.
-    #
+    #    
     ############################################################################
     
     src2 = []
@@ -740,7 +739,7 @@ cdef void _r(
     ############################################################################
     #    Preparation of the borders
     ############################################################################
-     
+    
     cdef int i
     cdef double x, y
     cdef double xp, yp
@@ -769,7 +768,7 @@ cdef void _r(
     ############################################################################
     #    Extremums
     ############################################################################
-     
+    
     i = 0
     while i < nbstep * 4 * 2:
         xp = t[ i ]
@@ -808,7 +807,7 @@ def image(
         long[ : , : ] voidimg,
         int ncore = 8
     ):
-
+    
     ############################################################################
     #    
     #    Image distortion function
@@ -816,18 +815,18 @@ def image(
     #        This function allows to distort an image based on a distortion
     #        parameter g. This function is a inplace function to allow multi-
     #        core processing.
-    #    
+    #        
     #        The distortion process is made with a reverse projection: The range
     #        of distortion is calculated (the 'range' parameter) in the first
     #        place. This range represents the distorted image. This function then
     #        create an empty image, and make the iteration over it. Each point of
     #        this destination image is projected on the original image to infer
     #        the colour of the specific pixel.
-    #    
+    #        
     #        This methodology implies the calculation of an estimation of the
     #        reverse projection function. The quality of the image depends on the
     #        estimation grid size (see the revert function documentation).
-    #    
+    #        
     #        The _project function cannot (for the moment) be used because of
     #        the memory management for the multi-core processing. Some
     #        adjustment has to be done.
@@ -894,39 +893,39 @@ def image(
                 ################################################################
                 #    Projection of ( x, y ) in the original image
                 ################################################################
-                 
+                
                 # d1 = np.dot( s, linear )
                 for jj from 0 <= jj < 2:
                     d1[ tid, jj ] = 0
-                     
+                    
                     for jjj from 0 <= jjj < 3:
                         d1[ tid, jj ] += s[ tid, jjj ] * linear[ jjj, jj ]
-                         
+                        
                 # sd = ( src - XY ) ** 2
                 for jj from 0 <= jj < nbsrc:
                     sd[ tid, jj, 0 ] = src[ jj, 0 ] - x_mm
                     sd[ tid, jj, 1 ] = src[ jj, 1 ] - y_mm
-                     
+                    
                 for jj from 0 <= jj < nbsrc:
                     sd[ tid, jj, 0 ] *= sd[ tid, jj, 0 ]
                     sd[ tid, jj, 1 ] *= sd[ tid, jj, 1 ]
-                 
+                
                 # su = np.sum( sd, axis = -1 )
                 for jj from 0 <= jj < nbsrc:
                     su[ tid, jj ] = sd[ tid, jj, 0 ] + sd[ tid, jj, 1 ]
-     
+                
                 # U2( su )
                 for jj from 0 <= jj < nbsrc:
                     if su[ tid, jj ] != 0:
                         su[ tid, jj ] = su[ tid, jj ] * log( su[ tid, jj ] )
-                 
+                
                 # d2 = np.dot( us, W )
                 for jj from 0 <= jj < 2:
                     d2[ tid, jj ] = 0
                      
                     for jjj from 0 <= jjj < nbsrc:
                         d2[ tid, jj ] += su[ tid, jjj ] * W[ jjj, jj ]
-                 
+                
                 ################################################################
                 #    Input data searching
                 ################################################################
@@ -940,7 +939,7 @@ def image(
                     # Bilinear Interpolation
                     dx = ( d1[ tid, 0 ] + d2[ tid, 0 ] ) % 1
                     dy = ( d1[ tid, 1 ] + d2[ tid, 1 ] ) % 1
-                      
+                    
                     c = int( 
                             ( 1 - dy ) * ( ( 1 - dx ) * indata[ xp, yp ] + dx * indata[ xp + 1, yp ] ) + 
                             dy * ( ( 1 - dx ) * indata[ xp, yp + 1 ] + dx * indata[ xp + 1, yp + 1 ] )
@@ -965,11 +964,11 @@ def grid(
     ):
     
     ############################################################################
-    #
+    #    
     #    Distorsion grid
-    #
+    #    
     #        Creation of the distorsion grid passed in argument.
-    #
+    #    
     ############################################################################
     
     ############################################################################
@@ -1004,10 +1003,10 @@ def grid(
     
     _r( linear_view, W_view, src_view, minx, maxx, miny, maxy, range_view )
     
-    cdef double rminx = range[0]
-    cdef double rmaxx = range[1]
-    cdef double rminy = range[2]
-    cdef double rmaxy = range[3]
+    cdef double rminx = range[ 0 ]
+    cdef double rmaxx = range[ 1 ]
+    cdef double rminy = range[ 2 ]
+    cdef double rmaxy = range[ 3 ]
     
     cdef int sizex = int( ( 1 + float( res ) / 25.4 * ( rmaxx - rminx ) ) + 2 * dm )
     cdef int sizey = int( ( 1 + float( res ) / 25.4 * ( rmaxy - rminy ) ) + 2 * dm )
@@ -1054,7 +1053,7 @@ def grid(
         for j from minx <= j <= maxx by minor_step:
             _project( j, i, linear_view, W_view, src_view, tmp_view )
             x, y = tmp
-               
+            
             xp = int( ( x - rminx ) * float( res ) / 25.4 )
             yp = int( ( y - rminy ) * float( res ) / 25.4 )
             
@@ -1085,11 +1084,11 @@ cdef double _norm(
     #        Required:
     #            @param 'vector' : Vector
     #            @type  'vector' : object with memory-view (numpy array or malloc'ed object)
-    #                       
+    #        
     #        Return: 
     #            @return    : Norm of the vector
     #            @return    : double
-    #        
+    #    
     ############################################################################
     
     return sqrt( vector[ 0 ] * vector[ 0 ] + vector[ 1 ] * vector[ 1 ] )
@@ -1108,13 +1107,13 @@ cdef void _unit_vector(
     #        Required:
     #            @param 'vector' : Input vector
     #            @type  'vector' : object with memory-view (numpy array or malloc'ed object)
-    #                       
+    #        
     #        Return: 
     #            @return    : None
     #            @return    : void
     #        
     ############################################################################
-        
+    
     cdef double n = _norm( vector )
     
     vector[ 0 ] /= n
@@ -1136,7 +1135,7 @@ cdef double _angle(
     #        Required:
     #            @param 'vector' : Input vector
     #            @type  'vector' : object with memory-view (numpy array or malloc'ed object)
-    #                       
+    #        
     #        Optional:
     #            @param 'deg' : Return the value in degree
     #            @type  'deg' : boolean
@@ -1145,7 +1144,7 @@ cdef double _angle(
     #        Return: 
     #            @return    : Angle
     #            @return    : double
-    #        
+    #    
     ############################################################################
     
     # In-place unit vector calculation
@@ -1170,12 +1169,12 @@ def angle_between(
     ):
     
     ############################################################################
-    # 
+    #    
     #    angle_between
-    #
+    #    
     #        Calculate the angle between two vectors ( a, b ) and ( c, d ),
     #        passed to the function as ( a, b, c, d ).
-    # 
+    #     
     ############################################################################
     
     return _angle_between( a, b, c, d, deg )
@@ -1189,11 +1188,11 @@ cdef double _angle_between(
     ):
     
     ############################################################################
-    # 
+    #    
     #    _angle_between
-    #
+    #    
     #        Pure-C implementation of the angle_between function
-    # 
+    #     
     ############################################################################
     
     cdef double angle = 0
@@ -1222,7 +1221,7 @@ cdef double _angle_between(
         
         else:
             return angle / M_PI * 180
-    
+
 def project(
         dict g,
         
@@ -1244,20 +1243,20 @@ def project(
     #        which is not the general case. In fingerprint, if the distortion is
     #        reasonable and actually physically plausible, then the bijective
     #        property will be true.
-    #    
+    #        
     #        Here, the general case is used. The definition of the partial
     #        derivative is used to calculate the angle of the minutiae:
-    #    
-    #    
-    #                                  f( x + dh ) - f( x )  
+    #        
+    #        
+    #                                  f( x + dh ) - f( x )
     #                   f'( x ) = lim ──────────────────────
     #                             h→0           h
-    #    
+    #        
     #        This definition is extended in the 2-dimensional plan by projecting
     #        two points spaced by 'dh' unit. By default, the 'dh' distance is
     #        set to 0.01 unit (mm in the fingerprint area). The angle is
     #        calculated by taking the angle between this line and the reference. 
-    #    
+    #        
     #        A faster version could be done by using pointers instead of
     #        memoryview, but the function _project has to be redesigned. The
     #        needs are for the moment not predominant.
@@ -1301,12 +1300,12 @@ def project(
     _project( x, y, linear_view, W_view, src_view, p1_view )
     _project( x + dh * cos( theta ), y + dh * sin( theta ), linear_view, W_view, src_view, p2_view )
     
-    dp[0] = p2[0] - p1[0]
-    dp[1] = p2[1] - p1[1]
+    dp[ 0 ] = p2[ 0 ] - p1[ 0 ]
+    dp[ 1 ] = p2[ 1 ] - p1[ 1 ]
     
     ang = _angle( dp_view )
     
-    return p1[0], p1[1], ang
+    return p1[ 0 ], p1[ 1 ], ang
 
 cdef void _project( 
         double x,
@@ -1357,7 +1356,7 @@ cdef void _project(
     #        Return: 
     #            @return    : Nothing
     #            @return    : void
-    #        
+    #    
     ############################################################################
     
     cdef int jj, jjj
