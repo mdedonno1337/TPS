@@ -440,12 +440,13 @@ def TPS_image( **kwargs ):
         ############################################################################
         
         if infile != None:
-            indata = misc.imread( infile ).astype( np.int )
+            indata = misc.imread( infile )
         elif inimg != None:
             indata = np.asarray( inimg )
         else:
             raise Exception( "No input data (infile or image object)" )
         
+        indata = indata.astype( np.int )
         indata = np.flipud( indata )
         indata = indata.T
         
