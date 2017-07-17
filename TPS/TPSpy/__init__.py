@@ -136,10 +136,16 @@ def _p( XY, linear, W, src ):
     return p[ 0, : ]
 
 def project( *args, **kwargs ):
-    g = kwargs.get( 'g', None )
-    x = kwargs.get( 'x' )
-    y = kwargs.get( 'y' )
-    theta = kwargs.get( 'theta', None )
+    try:
+        g, x, y, theta = args
+    except:
+        try:
+            g, x, y = args
+        except:
+            g = kwargs.get( 'g', None )
+            x = kwargs.get( 'x' )
+            y = kwargs.get( 'y' )
+            theta = kwargs.get( 'theta', None )
     
     if g == None:
         linear = kwargs.get( 'linear' )
