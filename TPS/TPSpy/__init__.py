@@ -118,6 +118,11 @@ def generate( src, dst ):
     
     be = max( 0.5 * np.trace( WKW ), 0 )
     
+    src = src.tolist()
+    dst = dst.tolist()
+    W = W.tolist()
+    a = a.tolist()
+    
     return {
         'src':      src,
         'dst':      dst,

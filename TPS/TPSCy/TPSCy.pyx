@@ -283,13 +283,13 @@ def generate(
     ############################################################################
     
     return {
-        'src':      np.asarray( src ),
-        'dst':      np.asarray( dst ),
-        'linear':   np.array( < double [ :3, :2 ] > linear ),
+        'src':      np.asarray( src ).tolist(),
+        'dst':      np.asarray( dst ).tolist(),
+        'linear':   np.array( < double [ :3, :2 ] > linear ).tolist(),
         'scale':    scale[ 0 ],
         'mirror':   mirror,
         'shearing': shearing[ 0 ],
-        'weights':  np.array( < double [ :n, :2 ] > W ),
+        'weights':  np.array( < double [ :n, :2 ] > W ).tolist(),
         'be':       be[ 0 ],
     }
     
@@ -640,13 +640,13 @@ def revert(
     
     cdef double x, y
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = g[ 'weights' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = np.asarray( g[ 'weights' ] )
     cdef double[ : , : ] W_view = W
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = g[ 'linear' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = np.asarray( g[ 'linear' ] )
     cdef double[ : , : ] linear_view = linear
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = g[ 'src' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = np.asarray( g[ 'src' ] )
     cdef double[ : , : ] src_view = src
     
     for x from 0 <= x <= maxx by step:
@@ -682,13 +682,13 @@ def r(
     #
     ############################################################################
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = g[ 'weights' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = np.asarray( g[ 'weights' ] )
     cdef double[ : , : ] W_view = W
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = g[ 'linear' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = np.asarray( g[ 'linear' ] )
     cdef double[ : , : ] linear_view = linear
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = g[ 'src' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = np.asarray( g[ 'src' ] )
     cdef double[ : , : ] src_view = src
     
     cdef double out[ 4 ]
@@ -858,9 +858,9 @@ def image(
     
     # Distorsion parameters
     cdef np.ndarray[ dtype = np.float64_t, ndim = 1 ] XY     = np.zeros( [ 2 ], dtype = np.float64, order = 'F' )
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W      = g[ 'weights' ]
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = g[ 'linear' ]
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src    = g[ 'src' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W      = np.asarray( g[ 'weights' ] )
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = np.asarray( g[ 'linear' ] )
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src    = np.asarray( g[ 'src' ] )
     
     cdef np.int_t nbsrc = src.shape[ 0 ]
     
@@ -976,13 +976,13 @@ def grid(
     #    Parsing of the parameters in memoryview for fast access
     ############################################################################
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = g[ 'linear' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = np.asarray( g[ 'linear' ] )
     cdef double[ : , : ] linear_view = linear
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = g[ 'weights' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = np.asarray( g[ 'weights' ] )
     cdef double[ : , : ] W_view = W
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = g[ 'src' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = np.asarray( g[ 'src' ] )
     cdef double[ : , : ] src_view = src
     
     ############################################################################
@@ -1268,13 +1268,13 @@ def project(
     #    Parsing of the parameters in memoryview for faster access
     ############################################################################
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = g[ 'linear' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] linear = np.asarray( g[ 'linear' ] )
     cdef double[ : , : ] linear_view = linear
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = g[ 'weights' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W = np.asarray( g[ 'weights' ] )
     cdef double[ : , : ] W_view = W
     
-    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = g[ 'src' ]
+    cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] src = np.asarray( g[ 'src' ] )
     cdef double[ : , : ] src_view = src
     
     ############################################################################
