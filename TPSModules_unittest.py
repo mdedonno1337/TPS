@@ -1,9 +1,17 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-from TPS import TPSCy, TPSpy, TPS_generate
+from TPS import TPSCy, TPSpy, TPS_generate, TPS_image, TPS_module
+
+from hashlib import md5
+from PIL import Image
+from PIL.ImageDraw import ImageDraw
+
 import numpy as np
 import unittest
+
+import random
+random.seed( 1337 )
 
 src = [ [ 3.6929, 10.3819 ], [ 6.5827, 8.8386 ], [ 6.7756, 12.0866 ], [ 4.8189, 11.2047 ], [ 5.6969, 10.0748 ] ]
 dst = [ [ 3.9724, 6.5354 ], [ 6.6969, 4.1181 ], [ 6.5394, 7.2362 ], [ 5.4016, 6.4528 ], [ 5.7756, 5.1142 ] ]
@@ -69,6 +77,11 @@ class TestImages( unittest.TestCase ):
         global src, dst
         self.g = TPS_generate( src, dst )
         
+        self.img = Image.new( "L", ( 500, 500 ), 255 )
+        draw = ImageDraw( self.img )
+        for d in xrange( 10, 250, 10 ):
+            draw.ellipse( ( d, d, 500 - d, 500 - d ) )
+        
         return super( TestImages, self ).__init__( *args, **kwargs )
     
     def test_r( self ):
@@ -84,6 +97,23 @@ class TestImages( unittest.TestCase ):
             
             for key in expected.keys():
                 self.assertTrue( np.allclose( r[ key ], expected[ key ] ), "\n\nError on: '%s' -> '%s'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), key, r[ key ], expected[ key ] ) )
+    
+    def test_grid( self ):
+        expected = "314a94ea0a8cc3fe19a32bc05c39b168"
+        
+        for TPSModule in [ TPSCy, TPSpy ]:
+            grid = TPSModule.grid( g = self.g, minx = 3.8, maxx = 8.6, miny = 8, maxy = 12.5, res = 2500 )
+            h = md5( grid.tobytes() ).hexdigest()
+            
+            self.assertEqual( h, expected, "\n\nError on: '%s' -> 'grid'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), h, expected ) )
+    
+    def test_image( self ):
+        expected = "48b98624141b7987a8e97f678dfded58"
+        
+        img = TPS_image( inimg = self.img, g = self.g )
+        h = md5( img.tobytes() ).hexdigest()
+        
+        self.assertEqual( h, expected, "\n\nError on: '%s' -> 'grid'\ngot\n\t%s\nexpected\n\t%s" % ( TPS_module(), h, expected ) )
     
 if __name__ == '__main__':
     unittest.main()
