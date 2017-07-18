@@ -108,12 +108,12 @@ class TestImages( unittest.TestCase ):
             self.assertEqual( h, expected, "\n\nError on: '%s' -> 'grid'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), h, expected ) )
     
     def test_image( self ):
-        expected = "48b98624141b7987a8e97f678dfded58"
+        expected = "72538f9250785848ae956a9954347de7"
         
         img = TPS_image( inimg = self.img, g = self.g )
         h = md5( img.tobytes() ).hexdigest()
         
-        self.assertEqual( h, expected, "\n\nError on: '%s' -> 'grid'\ngot\n\t%s\nexpected\n\t%s" % ( TPS_module(), h, expected ) )
+        self.assertEqual( h, expected, "\n\nError on: '%s' -> 'image'\ngot\n\t%s\nexpected\n\t%s" % ( TPS_module(), h, expected ) )
     
 if __name__ == '__main__':
     unittest.main()

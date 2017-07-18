@@ -800,11 +800,11 @@ cdef void _r(
     free( t )
     
 def image(
-        long[ : , : ] indata,
+        int[ : , : ] indata,
         dict g not None,
         dict range not None,
         double res,
-        long[ : , : ] voidimg,
+        int[ : , : ] voidimg,
         int ncore = 8
     ):
     
@@ -940,6 +940,15 @@ def image(
                     dx = ( d1[ tid, 0 ] + d2[ tid, 0 ] ) % 1
                     dy = ( d1[ tid, 1 ] + d2[ tid, 1 ] ) % 1
                     
+                    # FIXME:
+                    # 
+                    # Resolve this very ugly monkey patch. The solution should
+                    # be in the correct implementation of the data store used
+                    # here. The definition of "int" is not clear (can be 32 or
+                    # 64 bits), and need to be clearly defined and parsed.
+                    dx = round( dx * 100 ) / 100.0
+                    dy = round( dy * 100 ) / 100.0
+                    
                     c = int( 
                             ( 1 - dy ) * ( ( 1 - dx ) * indata[ xp, yp ] + dx * indata[ xp + 1, yp ] ) + 
                             dy * ( ( 1 - dx ) * indata[ xp, yp + 1 ] + dx * indata[ xp + 1, yp + 1 ] )
@@ -1011,13 +1020,9 @@ def grid(
     cdef int sizex = int( ( 1 + float( res ) / 25.4 * ( rmaxx - rminx ) ) + 2 * dm )
     cdef int sizey = int( ( 1 + float( res ) / 25.4 * ( rmaxy - rminy ) ) + 2 * dm )
     
-    size = [
-        sizex,
-        sizey
-    ]
-    
     cdef np.ndarray[ dtype = int, ndim = 2 ] outimg
-    outimg = np.empty( size, dtype = int )
+    
+    outimg = np.empty( ( sizex, sizey ), dtype = np.int32 )
     outimg.fill( 255 )
     
     ############################################################################

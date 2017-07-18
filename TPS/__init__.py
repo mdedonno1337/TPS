@@ -446,7 +446,7 @@ def TPS_image( **kwargs ):
         else:
             raise Exception( "No input data (infile or image object)" )
         
-        indata = indata.astype( np.int )
+        indata = indata.astype( np.int32 )
         indata = np.flipud( indata )
         indata = indata.T
         
@@ -485,7 +485,7 @@ def TPS_image( **kwargs ):
             int( float( res ) / 25.4 * ( r[ 'maxy' ] - r[ 'miny' ] ) )
         ]
         
-        outimg = np.ones( size, dtype = np.intc )
+        outimg = np.ones( size, dtype = np.int32 )
         
         ############################################################################
         #    Calculation of the "inverse" function (approximation)
