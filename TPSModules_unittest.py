@@ -108,6 +108,8 @@ class TestImages( unittest.TestCase ):
             self.assertEqual( h, expected, "\n\nError on: '%s' -> 'grid'\ngot\n\t%s\nexpected\n\t%s" % ( TPSModule.lang(), h, expected ) )
     
     def test_image( self ):
+        self.assertEqual( TPS_module(), "Cython", "Cython module not loaded correctly. Check the compilation or the import." )
+        
         expected = "72538f9250785848ae956a9954347de7"
         
         img = TPS_image( inimg = self.img, g = self.g )
