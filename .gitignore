@@ -9,3 +9,4 @@ doc/_build/
 tmp/
 TPS/version.py
 doc/version.py
+TPS/TPSCy/TPSCy.so
