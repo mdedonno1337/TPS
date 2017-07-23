@@ -104,7 +104,7 @@ def generate( src, dst ):
     W = Wa[ :-3 , : ]
     a = Wa[ -3: , : ]
     
-    surfaceratio = np.linalg.det( Wa[ -2: , : ] )
+    surfaceratio = ( a[ 1, 0 ] * a[ 2, 1 ] ) - ( a[ 2, 0 ] * a[ 1, 1 ] )
     scale = np.sqrt( np.abs( surfaceratio ) )
     if surfaceratio < 0:
         mirror = True
