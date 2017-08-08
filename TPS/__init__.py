@@ -614,7 +614,7 @@ def TPS_grid( **kwargs ):
         outimg = TPSModule.grid( **params )
         
         if plotpoints:
-            pointsize = int( kwargs.get( "pointsize", res / 250.0 ) )
+            pointsize = int( kwargs.get( "pointsize", 10 ) )
             pointcolour = kwargs.get( "pointcolour", "#FF0000" )
             
             r = TPS_range( **params )
