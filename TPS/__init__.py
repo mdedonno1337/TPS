@@ -105,10 +105,12 @@ def TPS_generate( *args, **kwags ):
         src = kwags.get( 'src' )
         dst = kwags.get( 'dst' )
     
+    lamb = kwags.get( "lamb", 0 )
+    
     src = np.array( src, dtype = np.double )
     dst = np.array( dst, dtype = np.double )
     
-    return TPSModule.generate( src, dst )
+    return TPSModule.generate( src, dst, lamb )
 
 def TPS_project( *args, **kwargs ):
     """  

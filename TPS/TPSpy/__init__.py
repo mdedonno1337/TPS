@@ -88,10 +88,11 @@ def U2( r ):
     else:
         return ( r ) * np.log( r )
 
-def generate( src, dst ):
+def generate( src, dst, lamb = 0 ):
     n = src.shape[0]
     
     K = U( cdist( src, src, metric = "euclidean" ) )
+    K += lamb * np.identity( n )
     
     P = np.hstack( ( np.ones( ( n, 1 ) ), src ) )
     

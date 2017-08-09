@@ -229,6 +229,7 @@ cdef void _U(
 def generate( 
         double[ : , : ] src not None,
         double[ : , : ] dst not None,
+        double          lamb,
     ):
     
     ############################################################################
@@ -262,7 +263,7 @@ def generate(
     
     # Call of the pure-C function
     _generate(
-        src, dst,       # input variables
+        src, dst, lamb, # input variables
         W, linear, &be  # output storage
     )
     
@@ -295,6 +296,7 @@ def generate(
 cdef void _generate(
         double [ : , : ] src,
         double [ : , : ] dst,
+        double lamb,
         
         double * out_W,
         double * out_linear,
@@ -350,6 +352,9 @@ cdef void _generate(
     
     _matrix_self_euclidean_dist( src, K_container )
     _U( K_container, n ** 2 ) 
+    
+    for i from 0 <= i < n:
+        K_container[ ( i ) + ( n * i ) ] = lamb
     
     ############################################################################
     #    
@@ -658,7 +663,7 @@ def revert(
     src2 = np.asarray( src2, dtype = np.float64 )
     dst2 = np.asarray( dst2, dtype = np.float64 )
     
-    return generate( src2, dst2 )
+    return generate( src2, dst2, 0 )
 
 def r(
         dict g not None,
