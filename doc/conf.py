@@ -12,7 +12,10 @@ project = u'TPS'
 copyright = u'2016-2017, Marco De Donno'
 author = u'Marco De Donno'
 
-from version import __version__
+try:
+    from version import __version__
+except:
+    __version__ = "dev"
 
 version = __version__
 release = __version__
