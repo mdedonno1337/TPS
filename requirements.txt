@@ -1,0 +1,2 @@
+cython
+sphinx_git
