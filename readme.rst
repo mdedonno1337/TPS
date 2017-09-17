@@ -5,4 +5,4 @@ This repo is a python/cython library to calculate the thin plate splines (TPS) t
 
 Some functions are availabale to create distorsions grids and distort images.
 
-The doc is avaiable on `readthedocs <http://python-tps.readthedocs.io/en/develop/>`.
+The doc is avaiable on `readthedocs <http://pytps.readthedocs.io/en/develop/>`_.
