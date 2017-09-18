@@ -1,5 +1,43 @@
-Installation
-############
+Run within Docker
+#################
+
+This library is shipped with a working Dockerfile. The docker image provide a running environnement to run the TPS library.
+
+First of all, install docker with the installation script provided by docker `here <https://get.docker.com/>`_.
+
+To build the TPS image, run the following command from within the TPS directory:
+
+.. code::
+	
+	docker build -t tps .
+
+This command will generate a docker image nammed `tps`. To run the image, run the following command:
+
+.. code::
+	
+	docker run -it tps
+
+If no argument is passed to the `docker run` command, the `unittest` will be run. The output should be similar to :
+
+.. code::
+	
+	mdedonno@docker:~/TPS/src$ docker run -it tps
+	.....
+	----------------------------------------------------------------------
+	Ran 5 tests in 1.155s
+	
+	OK
+
+To run a particular python script or module, you can run the docker image with the `-v` flag to mount a volume inside the docker image. To run the `script.py` script located into the `<path to mount>` directory, run this command: 
+
+.. code::
+	
+	docker run -it -v <path to mount>:/run tps python /run/<script>.py
+
+This command will mount the `<path to mount>` directory in `/script/` inside the container.
+
+Installation into Python
+########################
 
 The library can simply be cloned in a local repository, and imported. The __init__ module is in charge of loading the correct TPS core module depending of the presence or not of the compiled version.
 
@@ -7,6 +45,10 @@ Cython compilation
 ~~~~~~~~~~~~~~~~~~
 
 For performance issues, the library is available in C code compiled with Cython, and importable within Python.
+
+.. note::
+	
+	On Windows, `mingw32` have to be installed to performe the cython compilation.
 
 Makefile
 --------
@@ -28,10 +70,17 @@ The first step is to transcode the Cython code (TPSCy.pyx) into C code (TPSCy.c)
 
 	cython TPSCy.pyx
 
-The produced TPSCy.c file can be compiled with any C compiler with a command similar to:
+The produced TPSCy.c file can be compiled with any C compiler with a command similar to (on Windows):
 
 .. code::
 
 	gcc.exe -I<numpy include> -I<python include> -c TPSCy.c -o build/tpscy.o -O3 -mdll -fopenmp -fdce -ffast-math
+
+or on Linux:
+
+.. code::
+	
+	x86_64-linux-gnu-gcc -pthread -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -fno-strict-aliasing -Wdate-time -D_FORTIFY_SOURCE=2 -g -fdebug-prefix-map=/build/python2.7-HVkOs2/python2.7-2.7.13=. -fstack-protector-strong -Wformat -Werror=format-security -fPIC -I/usr/local/lib/python2.7/dist-packages/numpy/core/include -I/usr/include/python2.7 -c TPSCy.c -o build/temp.linux-x86_64-2.7/TPSCy.o -O3 -fopenmp -fdce -ffast-math -Wfatal-errors -w
+	x86_64-linux-gnu-gcc -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-z,relro -fno-strict-aliasing -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -Wdate-time -D_FORTIFY_SOURCE=2 -g -fdebug-prefix-map=/build/python2.7-HVkOs2/python2.7-2.7.13=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro -Wdate-time -D_FORTIFY_SOURCE=2 -g -fdebug-prefix-map=/build/python2.7-HVkOs2/python2.7-2.7.13=. -fstack-protector-strong -Wformat -Werror=format-security build/temp.linux-x86_64-2.7/TPSCy.o -lm -lgomp -lpthread -o /TPS/TPS/TPSCy/TPSCy.so
 
 This command will produce a .pyd (.dll equivalent) for Windows, and a .so file for Linux. Those files are created in the TPSCy folder, and are imported by the main wrapper (or manually) from within Python.
