@@ -34,7 +34,7 @@ To run a particular python script or module, you can run the docker image with t
 	
 	docker run -it -v <path to mount>:/run tps python /run/<script>.py
 
-This command will mount the `<path to mount>` directory in `/script/` inside the container.
+This command will mount the `<path to mount>` directory in `/run/` inside the container.
 
 Installation into Python
 ########################
