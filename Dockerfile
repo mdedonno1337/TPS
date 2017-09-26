@@ -32,4 +32,4 @@ RUN make -C /TPS/TPS/TPSCy
 ###   Unit test by default
 
 COPY TPSModules_unittest.py /TPS/TPSModules_unittest.py
-CMD python /TPS/TPSModules_unittest.py
+RUN python /TPS/TPSModules_unittest.py
