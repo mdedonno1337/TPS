@@ -11,10 +11,8 @@ RUN apt install -y python python-pip python-dev \
     build-essential libssl-dev libffi-dev libpq-dev
 RUN pip install --upgrade pip
 
-RUN pip install cython\
-	numpy \
-    pillow \
-    scipy
+COPY ./requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
 ################################################################################
 ###   TPS library
