@@ -41,13 +41,10 @@ def xfrange( start, stop = None, step = 1.0 ):
         cur += step
 
 def unit_vector( vector ):
-    v = vector / np.linalg.norm( vector )
-    return v
+    return vector / np.linalg.norm( vector )
 
 def _angle( v1, deg = False ):
-    v2 = np.array( ( 1, 0 ) )
-    
-    return angle_between( v1, v2, deg )
+    return angle_between( v1, np.array( ( 1, 0 ) ), deg )
     
 def angle_between( v1, v2, deg = False ):
     v1 = unit_vector( v1 )
@@ -60,37 +57,54 @@ def angle_between( v1, v2, deg = False ):
         else:
             return None
     
-    if v1[1] < 0:
+    if v1[ 1 ] < 0:
         angle = 2 * np.pi - angle
     
     angle = np.mod( angle, 2 * np.pi )
     
     if deg == False:
         return angle
+    
     else:
         return angle / np.pi * 180
 
 ################################################################################
-#    Bookstein 1989
+#
+#    Implementation of the functions as described in the original publication of
+#    Bookstein (1989).
+#
 ################################################################################
 
 @np.vectorize
 def U( r ):
     if r == 0.0:
         return 0.0
+    
     else:
         return ( r ** 2 ) * np.log( r ** 2 )
 
 @np.vectorize
 def U2( r ):
+    """
+        Optimization of the U function. Because the U function is almost always
+        used after taking the sqrt() on the data, this function remove the ^2
+        and is only callable on the non-sqrt() data ( ( sqrt( x ) ) ^ 2 = x ).
+    """
     if r == 0.0:
         return 0.0
+    
     else:
         return ( r ) * np.log( r )
 
 def generate( src, dst ):
-    n = src.shape[0]
+    """
+        Function to generate the distortion parameters between the source and
+        the destination. The name of the variables are the same as in the
+        original article.
+    """
+    n = src.shape[ 0 ]
     
+    # Variables as defined by Bookstein
     K = U( cdist( src, src, metric = "euclidean" ) )
     
     P = np.hstack( ( np.ones( ( n, 1 ) ), src ) )
@@ -99,25 +113,26 @@ def generate( src, dst ):
     
     V = np.hstack( ( dst.T, np.zeros( ( 2, 3 ) ) ) )
     
+    # Matrix system solving
     Wa = solve( L, V.T )
         
     W = Wa[ :-3 , : ]
     a = Wa[ -3: , : ]
-    
-    surfaceratio = ( a[ 1, 0 ] * a[ 2, 1 ] ) - ( a[ 2, 0 ] * a[ 1, 1 ] )
-    scale = np.sqrt( np.abs( surfaceratio ) )
-    if surfaceratio < 0:
-        mirror = True
-    else:
-        mirror = False
-    
-    shearing = angle_between( Wa[ -2: , 0 ], Wa[ -2: , 1 ], True )
     
     WK = np.dot( W.T, K )
     WKW = np.dot( WK, W )
     
     be = max( 0.5 * np.trace( WKW ), 0 )
     
+    # Implementation of other variables not present in the original publication
+    surfaceratio = ( a[ 1, 0 ] * a[ 2, 1 ] ) - ( a[ 2, 0 ] * a[ 1, 1 ] )
+    scale = np.sqrt( np.abs( surfaceratio ) )
+    
+    mirror = surfaceratio < 0
+    
+    shearing = angle_between( Wa[ -2: , 0 ], Wa[ -2: , 1 ], True )
+    
+    # Prepare the return dictionary
     src = src.tolist()
     dst = dst.tolist()
     W = W.tolist()
@@ -135,12 +150,19 @@ def generate( src, dst ):
     }
 
 def _p( XY, linear, W, src ):
+    """
+        Function to project an XY point with the TPS parameters (passed as
+        linear, W, and src arguments).
+    """
     p = np.dot( np.hstack( ( 1, XY ) ), linear ) + \
         np.dot( U2( np.sum( ( src - XY ) ** 2, axis = -1 ) ), W )
     
     return p[ 0, : ]
 
 def project( *args, **kwargs ):
+    """
+        Main function to project a ( x, y ) point with a set of parameter g.
+    """
     try:
         g, x, y, theta = args
     except:
@@ -166,6 +188,10 @@ def project( *args, **kwargs ):
     
     p = _p( XY, linear, W, src )
     
+    # If the an angle is set as input, an estimation of the output angle is done
+    # with this trick: a second point is places 0.1 unit in the direction given
+    # by the theta angle, projected. The projected-angle is calculated with a
+    # line between the main point and the second point.
     if theta != None:
         theta = theta / 180.0 * np.pi
         
@@ -178,6 +204,7 @@ def project( *args, **kwargs ):
         p = np.insert( p, 2, ang )
         
         return p
+    
     else:
         return p
 
@@ -222,16 +249,20 @@ def projo( *a, **k ):
             )
 
 ################################################################################
-#    Anti-error
+# 
+#    Grid related functions. Those functions are only available in the case
+#    where the compilation of the Cython module is not possible.
+#
+#        DONT USE THOSES FUNCTIONS IF POSSIBLE.
+#        Compile and use the Cython module instead !
+# 
 ################################################################################
 
-def revert():
-    return
- 
-def image():
-    return
- 
 def grid( *args, **kwargs ):
+    """
+        Generate the distortion grid for a set of parameters and a region of
+        interest.
+    """
     g = kwargs.get( "g" )
     res = kwargs.get( "res", CONF_res )
     minx = kwargs.get( "minx", CONF_minx )
@@ -300,6 +331,9 @@ def grid( *args, **kwargs ):
     return img
  
 def r( *args, **kwargs ):
+    """
+        Calculate the range after projection with the set of paramters.
+    """
     if len( args ) == 5:
         g, minx, maxx, miny, maxy = args
     
@@ -342,3 +376,14 @@ def r( *args, **kwargs ):
         'maxx': maxx,
         'maxy': maxy
     }
+
+################################################################################
+#    Anti-error
+################################################################################
+
+def revert():
+    return
+ 
+def image():
+    return
+
