@@ -2,4 +2,3 @@ cython
 numpy
 pillow
 scipy
-sphinx_git
