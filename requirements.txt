@@ -2,4 +2,3 @@ cython==0.27.1
 numpy==1.13.3
 pillow==4.3.0
 scipy==0.19.1
-sphinx_git==10.0.0
