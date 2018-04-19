@@ -1,5 +1,5 @@
 FROM debian
-MAINTAINER Marco De Donno <Marco.DeDonno@unil.ch>
+LABEL maintainer "Marco De Donno <Marco.DeDonno@unil.ch>"
 
 RUN apt update && \
     apt upgrade -y

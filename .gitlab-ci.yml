@@ -1,0 +1,7 @@
+before_script:
+    - docker --version
+
+build:
+    stage: build
+    script:
+        - docker build --pull -t tps .
