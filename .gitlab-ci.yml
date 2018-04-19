@@ -1,3 +1,7 @@
+stages:
+    - build
+    - versions
+
 before_script:
     - docker --version
 
@@ -5,3 +9,13 @@ build:
     stage: build
     script:
         - docker build --pull -t tps .
+
+python:
+    stage: versions
+    script:
+        - docker run tps python --version
+
+pip:
+    stage: versions
+    script:
+        - docker run tps pip freeze
