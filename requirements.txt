@@ -1,4 +1,4 @@
-cython==0.27.1
-numpy==1.13.3
-pillow==4.3.0
-scipy==0.19.1
+cython==0.28.2
+numpy==1.14.2
+pillow==5.1.0
+scipy==1.0.1
