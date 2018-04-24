@@ -9,7 +9,7 @@ before_script:
 build:
     stage: build
     script:
-        - docker build --pull -t tps .
+        - docker build --pull --no-cache -t tps .
 
 coverage:
     stage: coverage
