@@ -30,3 +30,6 @@ RUN make -C /TPS/TPS/TPSCy
 
 COPY TPSModules_unittest.py /TPS/TPSModules_unittest.py
 RUN python /TPS/TPSModules_unittest.py
+
+ADD coverage.py /TPS/coverage.py
+RUN chmod +x /TPS/coverage.py
