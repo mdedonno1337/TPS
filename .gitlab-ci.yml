@@ -1,6 +1,7 @@
 stages:
     - build
     - versions
+    - coverage
 
 before_script:
     - docker --version
@@ -9,6 +10,12 @@ build:
     stage: build
     script:
         - docker build --pull -t tps .
+
+coverage:
+    stage: coverage
+    script:
+        - docker run tps /TPS/coverage.sh
+    coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
 
 python:
     stage: versions
