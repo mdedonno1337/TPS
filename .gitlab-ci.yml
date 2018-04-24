@@ -19,3 +19,8 @@ pip:
     stage: versions
     script:
         - docker run tps pip freeze
+
+cython:
+    stage: versions
+    script:
+        - docker run tps cython --version
