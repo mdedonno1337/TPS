@@ -1,5 +1,6 @@
 stages:
     - build
+    - coverage
     - versions
 
 before_script:
@@ -9,6 +10,12 @@ build:
     stage: build
     script:
         - docker build --pull -t tps .
+
+coverage:
+    stage: coverage
+    script:
+        - docker run tps /bin/bash -c "coverage run ./TPSModules_unittest.py && coverage  report --include */TPS/*"
+    coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
 
 python:
     stage: versions
