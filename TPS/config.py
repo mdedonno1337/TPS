@@ -14,12 +14,6 @@ CONF_ncores = 8
 # Number of pixels to add as margin to the images
 CONF_dm = 5
 
-# Default zone of interest
-CONF_minx = 0
-CONF_maxx = 25.4
-CONF_miny = 0
-CONF_maxy = 25.4
-
 # Steps
 CONF_majorstep = 1
 CONF_minorstep = 0.02

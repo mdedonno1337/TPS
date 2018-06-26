@@ -577,10 +577,17 @@ def TPS_grid( **kwargs ):
     """
     g = kwargs.get( "g" )
     
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
+    minx, miny = np.amin( g[ 'src' ], axis = 0 ) - 2
+    maxx, maxy = np.amax( g[ 'src' ], axis = 0 ) + 2
+    
+    if "minx" in kwargs:
+        minx = kwargs[ 'minx' ]
+    if "miny" in kwargs:
+        miny = kwargs[ 'miny' ]
+    if "maxx" in kwargs:
+        maxx = kwargs[ 'maxx' ]
+    if "maxy" in kwargs:
+        maxy = kwargs[ 'maxy' ]
     
     plotpoints = kwargs.get( "plotpoints", True )
     
@@ -682,10 +689,17 @@ def TPS_range( **kwargs ):
     """
     g = kwargs.get( "g" )
     
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
+    minx, miny = np.amin( g[ 'src' ], axis = 0 ) - 2
+    maxx, maxy = np.amax( g[ 'src' ], axis = 0 ) + 2
+    
+    if "minx" in kwargs:
+        minx = kwargs[ 'minx' ]
+    if "miny" in kwargs:
+        miny = kwargs[ 'miny' ]
+    if "maxx" in kwargs:
+        maxx = kwargs[ 'maxx' ]
+    if "maxy" in kwargs:
+        maxy = kwargs[ 'maxy' ]
     
     return TPSModule.r( g, minx, maxx, miny, maxy )
 
@@ -726,10 +740,17 @@ def TPS_revertGrid( **kwargs ):
     else:
         g = kwargs.get( "g" )
         
-        minx = kwargs.get( "minx", CONF_minx )
-        maxx = kwargs.get( "maxx", CONF_maxx )
-        miny = kwargs.get( "miny", CONF_miny )
-        maxy = kwargs.get( "maxy", CONF_maxy )
+        minx, miny = np.amin( g[ 'src' ], axis = 0 ) - 2
+        maxx, maxy = np.amax( g[ 'src' ], axis = 0 ) + 2
+        
+        if "minx" in kwargs:
+            minx = kwargs[ 'minx' ]
+        if "miny" in kwargs:
+            miny = kwargs[ 'miny' ]
+        if "maxx" in kwargs:
+            maxx = kwargs[ 'maxx' ]
+        if "maxy" in kwargs:
+            maxy = kwargs[ 'maxy' ]
     
         gridSize = kwargs.get( "gridSize", CONF_gridSize )
         
@@ -778,10 +799,17 @@ def TPS_revertDownSampling( **kwargs ):
     """
     g = kwargs.get( "g" )
     
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
+    minx, miny = np.amin( g[ 'src' ], axis = 0 ) - 2
+    maxx, maxy = np.amax( g[ 'src' ], axis = 0 ) + 2
+    
+    if "minx" in kwargs:
+        minx = kwargs[ 'minx' ]
+    if "miny" in kwargs:
+        miny = kwargs[ 'miny' ]
+    if "maxx" in kwargs:
+        maxx = kwargs[ 'maxx' ]
+    if "maxy" in kwargs:
+        maxy = kwargs[ 'maxy' ]
 
     gridSize = kwargs.get( "gridSize", CONF_gridSize )
     

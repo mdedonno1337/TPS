@@ -265,10 +265,17 @@ def grid( *args, **kwargs ):
     """
     g = kwargs.get( "g" )
     res = kwargs.get( "res", CONF_res )
-    minx = kwargs.get( "minx", CONF_minx )
-    maxx = kwargs.get( "maxx", CONF_maxx )
-    miny = kwargs.get( "miny", CONF_miny )
-    maxy = kwargs.get( "maxy", CONF_maxy )
+    minx, miny = np.amin( g[ 'src' ], axis = 0 ) - 2
+    maxx, maxy = np.amax( g[ 'src' ], axis = 0 ) + 2
+    
+    if "minx" in kwargs:
+        minx = kwargs[ 'minx' ]
+    if "miny" in kwargs:
+        miny = kwargs[ 'miny' ]
+    if "maxx" in kwargs:
+        maxx = kwargs[ 'maxx' ]
+    if "maxy" in kwargs:
+        maxy = kwargs[ 'maxy' ]
     
     minor_step = kwargs.get( "minor_step", CONF_minorstep )
     major_step = kwargs.get( "major_step", CONF_majorstep )
@@ -340,10 +347,17 @@ def r( *args, **kwargs ):
     else:
         g = kwargs.get( "g" )
         
-        minx = kwargs.get( "minx", CONF_minx )
-        maxx = kwargs.get( "maxx", CONF_maxx )
-        miny = kwargs.get( "miny", CONF_miny )
-        maxy = kwargs.get( "maxy", CONF_maxy )
+        minx, miny = np.amin( g[ 'src' ], axis = 0 ) - 2
+        maxx, maxy = np.amax( g[ 'src' ], axis = 0 ) + 2
+        
+        if "minx" in kwargs:
+            minx = kwargs[ 'minx' ]
+        if "miny" in kwargs:
+            miny = kwargs[ 'miny' ]
+        if "maxx" in kwargs:
+            maxx = kwargs[ 'maxx' ]
+        if "maxy" in kwargs:
+            maxy = kwargs[ 'maxy' ]
     
     nbstep = 200
     stepx = ( maxx - minx ) / nbstep
