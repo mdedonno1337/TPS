@@ -747,6 +747,7 @@ cdef void _r(
     
     cdef double * t = < double * > malloc( ( nbstep + 1 ) * 4 * 2 * sizeof( double ) )
     
+    i = 0
     for x from minx <= x <= maxx by ( maxx - minx ) / float( nbstep ):
         _project( x, miny, linear, W, src, out )
         t[ i ], t[ i + 1 ] = out
