@@ -1,4 +1,4 @@
-FROM debian:9
+FROM debian:10
 LABEL maintainer "Marco De Donno <Marco.DeDonno@unil.ch>"
 
 RUN apt update && \
