@@ -853,9 +853,6 @@ def image(
     cdef np.float64_t rminx = range[ 'minx' ]
     cdef np.float64_t rminy = range[ 'miny' ]
     
-    # Color value
-    cdef np.int_t c
-    
     # Distorsion parameters
     cdef np.ndarray[ dtype = np.float64_t, ndim = 1 ] XY     = np.zeros( [ 2 ], dtype = np.float64, order = 'F' )
     cdef np.ndarray[ dtype = np.float64_t, ndim = 2 ] W      = np.asarray( g[ 'weights' ] )
@@ -935,7 +932,7 @@ def image(
                 yp = int( ( d1[ tid, 1 ] + d2[ tid, 1 ] ) * fac )
                 
                 if xp < 0 or xp >= indata.shape[ 0 ] - 1 or yp < 0 or yp >= indata.shape[ 1 ] - 1:
-                    c = 255
+                    voidimg[ x, y ] = 255
                 else:
                     # Bilinear Interpolation
                     dx = ( d1[ tid, 0 ] + d2[ tid, 0 ] ) % 1
@@ -950,12 +947,10 @@ def image(
                     dx = round( dx * 100 ) / 100.0
                     dy = round( dy * 100 ) / 100.0
                     
-                    c = int( 
-                            ( 1 - dy ) * ( ( 1 - dx ) * indata[ xp, yp ] + dx * indata[ xp + 1, yp ] ) + 
-                            dy * ( ( 1 - dx ) * indata[ xp, yp + 1 ] + dx * indata[ xp + 1, yp + 1 ] )
-                        )
-                
-                voidimg[ x, y ] = c
+                    voidimg[ x, y ] = int( 
+                        ( 1 - dy ) * ( ( 1 - dx ) * indata[ xp, yp ] + dx * indata[ xp + 1, yp ] ) +
+                        dy * ( ( 1 - dx ) * indata[ xp, yp + 1 ] + dx * indata[ xp + 1, yp + 1 ] )
+                    )
 
 def grid(
         dict g not None,
