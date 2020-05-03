@@ -947,7 +947,7 @@ def image(
                     dx = round( dx * 100 ) / 100.0
                     dy = round( dy * 100 ) / 100.0
                     
-                    voidimg[ x, y ] = int( 
+                    voidimg[ x, y ] = int(
                         ( 1 - dy ) * ( ( 1 - dx ) * indata[ xp, yp ] + dx * indata[ xp + 1, yp ] ) +
                         dy * ( ( 1 - dx ) * indata[ xp, yp + 1 ] + dx * indata[ xp + 1, yp + 1 ] )
                     )
