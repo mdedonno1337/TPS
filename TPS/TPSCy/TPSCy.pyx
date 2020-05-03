@@ -45,6 +45,7 @@
 #
 ################################################################################
 
+#cython: language_level   = 2
 #cython: boundscheck      = False
 #cython: wraparound       = False
 #cython: nonecheck        = False
