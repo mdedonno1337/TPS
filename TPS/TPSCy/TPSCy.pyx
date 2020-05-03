@@ -938,12 +938,6 @@ def image(
                     dx = ( d1[ tid, 0 ] + d2[ tid, 0 ] ) % 1
                     dy = ( d1[ tid, 1 ] + d2[ tid, 1 ] ) % 1
                     
-                    # FIXME:
-                    # 
-                    # Resolve this very ugly monkey patch. The solution should
-                    # be in the correct implementation of the data store used
-                    # here. The definition of "int" is not clear (can be 32 or
-                    # 64 bits), and need to be clearly defined and parsed.
                     dx = round( dx * 100 ) / 100.0
                     dy = round( dy * 100 ) / 100.0
                     
