@@ -23,61 +23,61 @@ except:
     from . import TPSpy as TPSModule
     
 ################################################################################
-#    
+#
 #    The aim of this wrapper is to simplify the use of the Cython library,
 #    implementing a fast and efficient version of TPS distortion proposed by
 #    Bookstein (1989).
-#    
+#
 #    All the exposed functions are available in the TPSCy.__init__ file. The
 #    TPSCy module should not (but can) be called directly.
-#    
+#
 #    All codes should be platform-independent. A re-compilation of the TPSCy
 #    module is, however, needed.
-#    
+#
 #    Some dependencies are needed:
-#    
+#
 #        BLAS / LAPACK
 #        fortran
 #        python
 #        numpy
 #        scipy
 #        cython
-#    
+#
 #    Because this library is designed to work on fingerprints, all functions are
 #    designed to work with coordinates in millimetres, with the origin on the
 #    lower left corner, as the ANSI/NIST 2007 standard. All functions, except
 #    "TPS_Image", are adimensional (can work with mm, inch, yard, pixels, light-
 #    year, parsec, or, if you want, the "Double-decker bus" unit).
-#    
+#
 #                                                Marco De Donno
 #                                                University of Lausanne
-#                                                
+#
 #                                                Marco.DeDonno@unil.ch
 #                                                mdedonno1337@gmail.com
-#    
-#    
+#
+#
 #    References:
 #
-#        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the   
-#        decomposition of deformations. IEEE Transactions on Pattern Analysis   
+#        Bookstein, F. L. (1989). Principal warps: Thin-plate splines and the
+#        decomposition of deformations. IEEE Transactions on Pattern Analysis
 #        and Machine Intelligence, Vol. 11 (6), pp. 567-585
-#        
+#
 #        NIST. (2007). American National Standard for Information Systems – Data
 #        Format for the Interchange of Fingerprint Facial, and Other Biometric
 #        Information – Part 1 (NIST Special Publication 500-271)
-#    
+#
 ################################################################################
 
 def TPS_module():
     return TPSModule.lang()
 
 ################################################################################
-#    
+#
 #    Wrapping function
-#    
+#
 #        Functions to simplity the calls of the TPSCy module. No new
 #        functionnality are added by those functions.
-#    
+#
 ################################################################################
 
 def TPS_generate( *args, **kwags ):
@@ -89,14 +89,14 @@ def TPS_generate( *args, **kwags ):
     
         Required:
         
-        :param src: Source coordinates ( x, y )
-        :type src: python list of tuples or list of lists or numpy array
+            :param src: Source coordinates ( x, y )
+            :type src: python list of tuples or list of lists or numpy array
         
-        :param dst: Destination coordinates ( x, y )
-        :type dst: python list of tuples or list of lists or numpy array
+            :param dst: Destination coordinates ( x, y )
+            :type dst: python list of tuples or list of lists or numpy array
 
-        :return: TPS parameters
-        :rtype: python dictionnary
+            :return: TPS parameters
+            :rtype: python dictionnary
     
     """
     try:
@@ -111,30 +111,31 @@ def TPS_generate( *args, **kwags ):
     return TPSModule.generate( src, dst )
 
 def TPS_project( *args, **kwargs ):
-    """  
+    """
         Projection of the ( x, y ) point with the TPS function 'g' given in
         parameters. If a angle 'theta' is given, the projected angle is
         given in return.
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
-                     
-        :param x: x coordinate
-        :type x: float
-        
-        :param y: y coordinate
-        :type y: float
+            :param g: TPS parameters
+            :type g: python dictionary
+                         
+            :param x: x coordinate
+            :type x: float
+            
+            :param y: y coordinate
+            :type y: float
                   
         Optional:
         
-        :param theta: minutia angle
-        :type theta: float
+            :param theta: minutia angle
+            :type theta: float
         
         Return:
-        :return: Projected point ( x, y ) of ( x, y, theta )
-        :rtype: python tuple
+
+            :return: Projected point ( x, y ) of ( x, y, theta )
+            :rtype: python tuple
     """
     
     try:
@@ -165,16 +166,16 @@ def TPS_project_list( *args, **kwargs ):
      
         Required:
     
-        :param g: TPS parameters
-        :type g: python dictionary
-        
-        :param lst: List of points to distort
-        :type lst: python list
+            :param g: TPS parameters
+            :type g: python dictionary
+            
+            :param lst: List of points to distort
+            :type lst: python list
             
         Return:
         
-        :return: List of distorted points
-        :rtype: python list
+            :return: List of distorted points
+            :rtype: python list
     """
     try:
         g, lst = args
@@ -185,9 +186,9 @@ def TPS_project_list( *args, **kwargs ):
     return [ TPS_project( g, *d ) for d in lst ]
     
 ################################################################################
-#    
+#
 #    TPS specific tools
-#    
+#
 ################################################################################
 
 def TPS_loadFromFile( f ):
@@ -197,13 +198,13 @@ def TPS_loadFromFile( f ):
         
         Required:
     
-        :param f: URI of the file to load
-        :type f: string
+            :param f: URI of the file to load
+            :type f: string
                        
         Return:
     
-        :return: TPS parameters
-        :rtype: pyton dictionary
+            :return: TPS parameters
+            :rtype: pyton dictionary
     """
     with open( f, "r" ) as fp:
         data = fp.read()
@@ -220,13 +221,13 @@ def TPS_fromListToNumpy( *args, **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
+            :param g: TPS parameters
+            :type g: python dictionary
         
         Return:
         
-        :return: TPS parameters
-        :rtype: pyton dictionary
+            :return: TPS parameters
+            :rtype: pyton dictionary
     """
     try:
         g = args[0]
@@ -246,21 +247,21 @@ def TPS_recenter( *args, **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
+            :param g: TPS parameters
+            :type g: python dictionary
                        
         Optional:
         
-        :param cx: x coordinate 
-        :type cx: float
+            :param cx: x coordinate
+            :type cx: float
+            
+            :param cy: y coordinate
+            :type cy: float
         
-        :param cy: y coordinate 
-        :type cy: float
+        Return:
         
-        Return: 
-        
-        :return: TPS parameters
-        :rtype: python dictionary
+            :return: TPS parameters
+            :rtype: python dictionary
     """
     try:
         g, cx, cy = args
@@ -284,20 +285,21 @@ def TPS_shift( *args, **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
+            :param g: TPS parameters
+            :type g: python dictionary
         
         Optional:
-        :param dx: dx shift 
-        :type dx: float
+
+            :param dx: dx shift
+            :type dx: float
+            
+            :param dy: dy shift
+            :type dy: float
         
-        :param dy: dy shift 
-        :type dy: float
+        Return:
         
-        Return: 
-        
-        :return: TPS parameters
-        :rtype: python dictionary
+            :return: TPS parameters
+            :rtype: python dictionary
     """
     try:
         g, cx, cy = args
@@ -322,16 +324,16 @@ def TPS_rotate( **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
-        
-        :param theta: angle of rotation
-        :type theta: float
-        
-        Return:    
+            :param g: TPS parameters
+            :type g: python dictionary
+            
+            :param theta: angle of rotation
+            :type theta: float
+            
+        Return:
                
-        :return: TPS parameters
-        :rtype: python dictionary
+            :return: TPS parameters
+            :rtype: python dictionary
     """
     g = kwargs.get( "g" )
     g2 = deepcopy( g )
@@ -361,54 +363,54 @@ def TPS_image( **kwargs ):
         
         Required:
         
-        :param infile: URI to the input file
-        :type infile: python string
-        
-        :param inimg: numpy array with the input image
-        :type inimg: numpy.array
-        
-        .. note::
-            `infile` and `inimg` are mutially exclusive. `inimg` has prioritary
-        
-        :param gfile: URI to the TPS parameters file
-        :type gfile: python string
-        
-        :param g: TPS parameters
-        :type g: python dictionary
-        
-        .. note::
-            `gile` and `g` are mutially exclusive. `gfile` has prioritary
+            :param infile: URI to the input file
+            :type infile: python string
+            
+            :param inimg: numpy array with the input image
+            :type inimg: numpy.array
+            
+            .. note::
+                `infile` and `inimg` are mutially exclusive. `inimg` has prioritary
+            
+            :param gfile: URI to the TPS parameters file
+            :type gfile: python string
+            
+            :param g: TPS parameters
+            :type g: python dictionary
+            
+            .. note::
+                `gfile` and `g` are mutially exclusive. `gfile` has prioritary
         
         Optional:
         
-        :param res: Resolution of the input and output image
-        :type res: float
-        
-        :param outfile: URI to the output image file
-        :type outfile: string
-        
-        :param reverseFullGrid: Use the full-grid to revert the 'g' function (SLOW !)
-        :type reverseFullGrid: boolean
-        
-        :param useWeights: Use the weights to selects the optimal grid to revert the 'g' function
-        :type useWeights: boolean
-        
-        :param gridSize: Size of the grid to caculate the revert function
-        :type gridSize: float
-        
-        :param cx: x coordinate of the center
-        :type cx: float
-        
-        :param cy: y coordinate of the center
-        :type cy: float
-        
-        :param ncores: Number of cores used to do the projection of the input image.
-        :type ncores: int
+            :param res: Resolution of the input and output image
+            :type res: float
+            
+            :param outfile: URI to the output image file
+            :type outfile: string
+            
+            :param reverseFullGrid: Use the full-grid to revert the 'g' function (SLOW !)
+            :type reverseFullGrid: boolean
+            
+            :param useWeights: Use the weights to selects the optimal grid to revert the 'g' function
+            :type useWeights: boolean
+            
+            :param gridSize: Size of the grid to caculate the revert function
+            :type gridSize: float
+            
+            :param cx: x coordinate of the center
+            :type cx: float
+            
+            :param cy: y coordinate of the center
+            :type cy: float
+            
+            :param ncores: Number of cores used to do the projection of the input image.
+            :type ncores: int
         
         Return:
         
-        :return: Distorted image or successuly-written image
-        :rtype: numpy.array or bool
+            :return: Distorted image or successuly-written image
+            :rtype: numpy.array or bool
     """
     if TPSModule.lang() == "Python":
         raise NotImplementedError
@@ -543,36 +545,36 @@ def TPS_grid( **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
+            :param g: TPS parameters
+            :type g: python dictionary
         
         Optional:
         
-        :param minx: minimum x coordinate
-        :type minx: float
-            
-        :param maxx: maximum x coordinate
-        :type maxx: float
+            :param minx: minimum x coordinate
+            :type minx: float
+                
+            :param maxx: maximum x coordinate
+            :type maxx: float
 
-        :param miny: minimum y coordinate
-        :type miny: float
+            :param miny: minimum y coordinate
+            :type miny: float
 
-        :param maxy: maximum y coordinate
-        :type maxy: float
+            :param maxy: maximum y coordinate
+            :type maxy: float
 
-        :param outfile: URI to the output image. If None, the function will return the numpy.array of the image
-        :type outfile: string
+            :param outfile: URI to the output image. If None, the function will return the numpy.array of the image
+            :type outfile: string
 
-        :param res: Resolution of the output image
-        :type res: float
+            :param res: Resolution of the output image
+            :type res: float
 
-        :param dm: Border of the image added around the grid
-        :type dm: float
+            :param dm: Border of the image added around the grid
+            :type dm: float
         
         Return:
         
-        :return: Image or sucessfully writed image
-        :rtype: numpy.array or boolean
+            :return: Image or sucessfully writed image
+            :rtype: numpy.array or boolean
 
     """
     g = kwargs.get( "g" )
@@ -665,27 +667,27 @@ def TPS_range( **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
+            :param g: TPS parameters
+            :type g: python dictionary
                        
         Optional:
         
-        :param minx: minimum x coordinate
-        :type minx: float
+            :param minx: minimum x coordinate
+            :type minx: float
 
-        :param maxx: maximum x coordinate
-        :type maxx: float
+            :param maxx: maximum x coordinate
+            :type maxx: float
 
-        :param miny: minimum y coordinate
-        :type miny: float
+            :param miny: minimum y coordinate
+            :type miny: float
 
-        :param maxy: maximum y coordinate
-        :type maxy: float
+            :param maxy: maximum y coordinate
+            :type maxy: float
         
         Return:
         
-        :return: Dictionnary with minx, maxx, miny and maxy
-        :return: python dict
+            :return: Dictionnary with minx, maxx, miny and maxy
+            :return: python dict
     """
     g = kwargs.get( "g" )
     
@@ -709,30 +711,31 @@ def TPS_revertGrid( **kwargs ):
         projection function with a grid of size 'gridSize'.
         
         Required:
-        :param g: TPS parameters
-        :type g: python dictionary
+
+            :param g: TPS parameters
+            :type g: python dictionary
         
         Optional:
         
-        :param minx: minimum x coordinate
-        :type minx: float
+            :param minx: minimum x coordinate
+            :type minx: float
 
-        :param maxx: maximum x coordinate
-        :type maxx: float
+            :param maxx: maximum x coordinate
+            :type maxx: float
 
-        :param miny: minimum y coordinate
-        :type miny: float
+            :param miny: minimum y coordinate
+            :type miny: float
 
-        :param maxy: maximum y coordinate
-        :type maxy: float
-    
-        :param gridSize: Size of the grid
-        :type gridSize: float
+            :param maxy: maximum y coordinate
+            :type maxy: float
         
-        Return: 
+            :param gridSize: Size of the grid
+            :type gridSize: float
         
-        :return: reverted TPS parameters 
-        :rtype: python dictionary
+        Return:
+        
+            :return: reverted TPS parameters
+            :rtype: python dictionary
     """
     if TPSModule.lang() == "Python":
         raise NotImplementedError
@@ -763,39 +766,39 @@ def TPS_revertDownSampling( **kwargs ):
         
         Required:
         
-        :param g: TPS parameters
-        :type g: python dictionary
+            :param g: TPS parameters
+            :type g: python dictionary
                        
         Optional:
         
-        :param minx: minimum x coordinate
-        :type minx: float
+            :param minx: minimum x coordinate
+            :type minx: float
 
-        :param maxx: maximum x coordinate
-        :type maxx: float
+            :param maxx: maximum x coordinate
+            :type maxx: float
 
-        :param miny: minimum y coordinate
-        :type miny: float
+            :param miny: minimum y coordinate
+            :type miny: float
 
-        :param maxy: maximum y coordinate
-        :type maxy: float
-    
-        :param gridSize: Size of the grid
-        :type gridSize: float
-    
-        :param useWeights: Use the weights of the TPS parameters to select only the important points
-        :type useWeights: boolean
-    
-        :param weightslimit: Minimum weight to select an important point
-        :type weightslimit: float
-    
-        :param nbrandom: Number of random points added on the grid
-        :type nbrandom: int
+            :param maxy: maximum y coordinate
+            :type maxy: float
+
+            :param gridSize: Size of the grid
+            :type gridSize: float
+
+            :param useWeights: Use the weights of the TPS parameters to select only the important points
+            :type useWeights: boolean
+
+            :param weightslimit: Minimum weight to select an important point
+            :type weightslimit: float
+
+            :param nbrandom: Number of random points added on the grid
+            :type nbrandom: int
         
-        Return: 
+        Return:
         
-        :return: reverted TPS parameters 
-        :rtype: python dictionary
+            :return: reverted TPS parameters
+            :rtype: python dictionary
     """
     g = kwargs.get( "g" )
     
@@ -901,3 +904,4 @@ def TPS_Grid( **kwargs ):
 @deprecated( "Use the TPS_image() function instead" )
 def TPS_Image( **kwargs ):
     return TPS_image( **kwargs )
+
