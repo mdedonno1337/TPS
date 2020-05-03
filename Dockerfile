@@ -21,8 +21,8 @@ RUN make -C /TPS/TPS/TPSCy
 ################################################################################
 ###   Unit test by default
 
-COPY TPSModules_unittest.py /TPS/TPSModules_unittest.py
-RUN python /TPS/TPSModules_unittest.py
+COPY doctester.py /TPS/doctester.py
+RUN python /TPS/doctester.py
 
 ADD coverage.sh /TPS/coverage.sh
 RUN chmod +x /TPS/coverage.sh

@@ -3,5 +3,5 @@
 pip install coverage
 
 cd /TPS
-coverage run ./TPSModules_unittest.py
+coverage run ./doctester.py
 coverage report --include */TPS/*
