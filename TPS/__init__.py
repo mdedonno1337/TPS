@@ -891,17 +891,3 @@ def TPS_revertDownSampling( **kwargs ):
     
     return TPS_generate( src = srcbis, dst = dstbis )
 
-################################################################################
-# 
-#    Deprecated functions
-# 
-################################################################################
-
-@deprecated( "Use the TPS_grid() function instead" )
-def TPS_Grid( **kwargs ):
-    return TPS_grid( **kwargs )
-
-@deprecated( "Use the TPS_image() function instead" )
-def TPS_Image( **kwargs ):
-    return TPS_image( **kwargs )
-
