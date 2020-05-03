@@ -295,10 +295,10 @@ def grid( *args, **kwargs ):
     #    Determination of the distortion range
     ############################################################################
     
-    range = r( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy )
+    TPSrange = r( g = g, minx = minx, maxx = maxx, miny = miny, maxy = maxy )
     
-    sizex = int( ( 1 + float( res ) / 25.4 * ( range[ 'maxx' ] - range[ 'minx' ] ) ) + 2 * dm )
-    sizey = int( ( 1 + float( res ) / 25.4 * ( range[ 'maxy' ] - range[ 'miny' ] ) ) + 2 * dm )
+    sizex = int( ( 1 + float( res ) / 25.4 * ( TPSrange[ 'maxx' ] - TPSrange[ 'minx' ] ) ) + 2 * dm )
+    sizey = int( ( 1 + float( res ) / 25.4 * ( TPSrange[ 'maxy' ] - TPSrange[ 'miny' ] ) ) + 2 * dm )
     
     size = [ sizex, sizey ]
     
@@ -315,8 +315,8 @@ def grid( *args, **kwargs ):
         for j in xfrange( miny, maxy, minor_step ):
             x, y = project( x = i, y = j, g = g )
             
-            xp = int( ( x - range[ 'minx' ] ) * float( res ) / 25.4 )
-            yp = int( ( y - range[ 'miny' ] ) * float( res ) / 25.4 )
+            xp = int( ( x - TPSrange[ 'minx' ] ) * float( res ) / 25.4 )
+            yp = int( ( y - TPSrange[ 'miny' ] ) * float( res ) / 25.4 )
             
             try:
                 pixels[ xp + dm, sizey - ( yp + dm ) - 1 ] = 0
@@ -327,8 +327,8 @@ def grid( *args, **kwargs ):
         for j in xfrange( minx, maxx, minor_step ):
             x, y = project( x = j, y = i, g = g )
             
-            xp = int( ( x - range[ 'minx' ] ) * float( res ) / 25.4 )
-            yp = int( ( y - range[ 'miny' ] ) * float( res ) / 25.4 )
+            xp = int( ( x - TPSrange[ 'minx' ] ) * float( res ) / 25.4 )
+            yp = int( ( y - TPSrange[ 'miny' ] ) * float( res ) / 25.4 )
             
             try:
                 pixels[ xp + dm, sizey - ( yp + dm ) - 1 ] = 0
