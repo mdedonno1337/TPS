@@ -1,33 +1,14 @@
-stages:
-    - build
-    - versions
-    - coverage
-
-before_script:
-    - docker --version
-
+image: debian:10
+    
 build:
     stage: build
     script:
-        - docker build --pull --no-cache -t tps .
-
-coverage:
-    stage: coverage
-    script:
-        - docker run tps /TPS/coverage.sh
+        - apt-get update
+        - apt-get install -y python python-pip python-dev build-essential libssl-dev libffi-dev libpq-dev
+        - pip install -r requirements.txt
+        - pwd > /usr/local/lib/python2.7/dist-packages/mdedonno.pth
+        - make -C ./TPS/TPSCy
+        - python ./doctester.py
+        - ./coverage.sh
     coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
 
-python:
-    stage: versions
-    script:
-        - docker run tps python --version
-
-pip:
-    stage: versions
-    script:
-        - docker run tps pip freeze
-
-cython:
-    stage: versions
-    script:
-        - docker run tps cython --version
